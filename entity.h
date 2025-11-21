@@ -170,6 +170,7 @@ void PlayerCameraControls(Entity *player, float dt);
 
 void PlayerApplyJetpack(Entity *player, PlayerData *p, float dt, uint8_t on);
 void PlayerHandleBodyCollision(Entity *player, PlayerData *p, Entity *ent, float dt);
+void PlayerHandleFishCollision(Entity *player, PlayerData *p, Entity *ent, float dt);
 
 void HarpoonUpdate(Entity *player, PlayerData *p, Harpoon *h, float dt);
 void HarpoonDraw(Entity *player, PlayerData *p, Harpoon *h, SpriteLoader *sl);

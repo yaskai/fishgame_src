@@ -247,6 +247,21 @@ void PlayerHandleBodyCollision(Entity *player, PlayerData *p, Entity *ent, float
 	PlayEffect(ptr_player_handler->ap, 2);
 }
 
+// Handle player entity's collision response to asteroids
+void PlayerHandleFishCollision(Entity *player, PlayerData *p, Entity *ent, float dt) {
+	if(!(ent->flags & ENT_ACTIVE)) return;
+
+	FishData *f = ent->data;
+	
+	ent->flags &= ~ENT_ACTIVE;
+
+	ptr_player_handler->fish_collected++;
+
+	PlayEffect(ptr_player_handler->ap, 0);
+
+	f->timer = GetRandomValue(20, 45);
+}
+
 // Update harpoon and connected components
 void HarpoonUpdate(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	rope_grav_targ = Vector2Lerp(rope_grav_targ, Vector2Zero(), dt);
@@ -532,9 +547,12 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 void HarpoonExtend(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	p->rope->start_id = 0;
 
-	p->rope_timer -= dt;
-	if(p->rope_timer < 0) {
-		p->rope_timer = 1;
+	if(p->rope->stretch >= p->rope->max_stretch && p->rope->segment_dist && rope.segment_dist >= 3.9f) {
+		p->rope_timer -= dt;
+		if(p->rope_timer < 0) {
+			if(p->rope_timer < 0) h->state = HARPOON_RETRACT; 
+			p->rope_timer = 1;
+		}
 	}
 
 	p->rope->segment_dist = Lerp(p->rope->segment_dist, 4.0f, dt * 20);

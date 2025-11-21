@@ -71,7 +71,7 @@ void EntHandlerInit(EntHandler *handler, SpriteLoader *sprite_loader, Camera2D *
 	handler->asteroid_data 	= calloc(MAX_ASTEROIDS, sizeof(AsteroidData));
 	handler->item_data 		= calloc(MAX_ITEMS, sizeof(ItemData));
 
-	handler->game_timer = 0.0f;
+	handler->game_timer = 180.0f;
 	handler->fish_collected = 0;
 
 	handler->grid = (Grid){0};
@@ -85,6 +85,11 @@ void EntHandlerInit(EntHandler *handler, SpriteLoader *sprite_loader, Camera2D *
 void EntHandlerUpdate(EntHandler *handler, float dt) {
 	Entity *player_ent = &handler->ents[handler->player_id];
 	PlayerData *p = player_ent->data;
+	
+	if(IsKeyPressed(KEY_R)) {
+		player_ent->position = player_ent->start_pos;
+		player_ent->velocity = Vector2Zero();
+	}
 
 	Grid *grid = &handler->grid;
 
@@ -171,9 +176,17 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 			for(uint16_t j = 0; j < cell->ent_count; j++) {
 				Entity *ent = &handler->ents[cell->ids[j]];
 
-				if(ent->type == ENT_ASTEROID)
+				if(ent->type == ENT_ASTEROID) {
 					if(CheckCollisionCircles(EntCenter(player_ent), player_ent->radius, EntCenter(ent), ent->radius * 1.25f))
 						PlayerHandleBodyCollision(player_ent, p, ent, dt * handler->time_mod);
+
+				}
+
+				if(ent->type == ENT_FISH) {
+					if(CheckCollisionCircles(EntCenter(player_ent), player_ent->radius, EntCenter(ent), ent->radius * 1.25f)) {
+						PlayerHandleFishCollision(player_ent, p, ent, dt * handler->time_mod);
+					}
+				}
 				
 			}
 		}

@@ -7,6 +7,8 @@
 #include "sprites.h"
 #include "map.h"
 
+Texture2D controls;
+
 // Buffer texture game draws to, used for scaling graphics to desired resolution 
 RenderTexture2D render_target;
 
@@ -59,12 +61,14 @@ void GameContentInit(Game *game) {
 
 	//game->audio_player = (AudioPlayer){0};
 	AudioPlayerInit(&game->audio_player);
+
+	controls = LoadTexture("resources/fishgamecontrols.jpg");
+	SetTextureFilter(controls, TEXTURE_FILTER_TRILINEAR);
 }
 
 void GameUpdate(Game *game) {
 	// Get delta time once only, pass to other update functions
 	float delta_time = GetFrameTime();
-
 
 	// Send quit request on hitting escape
 	if(IsKeyPressed(KEY_ESCAPE))
@@ -122,14 +126,23 @@ void TitleDraw(Game *game, uint8_t flags) {
 	Vector2 screen_center = Vector2Scale((Vector2){VIRTUAL_WIDTH, VIRTUAL_HEIGHT}, 0.5f);
 	char *prompt_text = (game->input_method == KEYBOARD) ? "press space to play" : "press A to play";
 
-	DrawText("Fish game Demo", screen_center.x - 380, screen_center.y - 100, 100, RAYWHITE);
+	//DrawText("Fish game Demo", screen_center.x - 380, screen_center.y - 100, 100, RAYWHITE);
 	DrawText(prompt_text, screen_center.x - 160, screen_center.y + 100, 32, RAYWHITE);
+
+	DrawTextureRec(controls, (Rectangle){0, 0, controls.width, controls.height}, (Vector2){0, 0}, WHITE);
+	DrawTexturePro(
+		controls,
+		(Rectangle){0, 0, controls.width, controls.height},
+		(Rectangle){0, 0, 1920 * 0.5f, 1080 * 0.5f},
+		(Vector2){0, 0},
+		0, 
+		WHITE);
 }
 
 // Main gameplay loop logic
 void MainUpdate(Game *game, float delta_time) {
-	game->ent_handler.game_timer += delta_time;
-	if(game->ent_handler.game_timer >= 180)
+	game->ent_handler.game_timer -= delta_time;
+	if(game->ent_handler.game_timer <= 0)
 		game->state = GAME_END;
 
 	EntHandlerUpdate(&game->ent_handler, delta_time);
@@ -192,6 +205,7 @@ void MainStart(Game *game) {
 	game->cam.target = EntCenter(player);
 
 	game->state = GAME_MAIN;
-	game->ent_handler.game_timer = 0;
+	game->ent_handler.game_timer = 180;
+	game->ent_handler.fish_collected = 0;
 }
 
