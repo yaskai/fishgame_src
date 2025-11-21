@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <string.h>
 #include "map.h"
+#include "raylib.h"
+#include "raymath.h"
 
 void MapLoad(EntHandler *handler, char *path) {
 	FILE *pf = fopen(path, "r");
@@ -92,7 +94,7 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 	else if(!strcmp(key, "position")) {
 		Vector2 position;
 		sscanf(val, "%f, %f", &position.x, &position.y);
-		ent->position = position;
+		ent->position = Vector2Add(position, (Vector2){512, 512});
 		ent->start_pos = position;
 	}
 }

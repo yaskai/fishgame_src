@@ -23,8 +23,8 @@ typedef struct {
 } Cell;
 
 typedef struct {
-	uint16_t cell_count;
 	uint16_t row_count;
+	uint32_t cell_count;
 	float cell_size;
 	Vector2 offset;
 	Cell *cells;

@@ -366,19 +366,19 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 	Grid *grid = &ptr_player_handler->grid;
 
-	uint16_t player_cell_x 	= h->position.x / grid->cell_size;
-	uint16_t player_cell_y  = h->position.y / grid->cell_size;
-	uint16_t player_cell_id = (player_cell_x + player_cell_y * grid->row_count);
+	uint16_t h_cell_x 	= h->position.x / grid->cell_size;
+	uint16_t h_cell_y  = h->position.y / grid->cell_size;
+	uint16_t h_cell_id = (h_cell_x + h_cell_y * grid->row_count);
 
-	Cell *player_cell = &grid->cells[player_cell_id];
+	Cell *player_cell = &grid->cells[h_cell_id];
 		
 	int8_t dir_x[] = { -1, 0, 1 };
 	int8_t dir_y[] = { -1, 0, 1 };
 
 	for(uint8_t c = 0; c < 3; c++) {
 		for(uint8_t r = 0; r < 3; r++) {
-			int16_t cell_x = player_cell_x + dir_x[c];
-			int16_t cell_y = player_cell_y + dir_y[r];
+			int16_t cell_x = h_cell_x + dir_x[c];
+			int16_t cell_y = h_cell_y + dir_y[r];
 			
 			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) continue;
 
@@ -399,12 +399,12 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 				Vector2 ray_start = h->position;
 				Vector2 ray_end = Vector2Add(ray_start, Vector2Scale(forward, 999));
 
-				if(!CheckCollisionCircleLine(EntCenter(ent), ent->radius * 25.05f, ray_start, ray_end)) 	continue; 	
-				//if(!CheckCollisionPointCircle(h->position, EntCenter(ent), ent->radius * 1.05f)) 		continue; 
+				//if(!CheckCollisionCircleLine(EntCenter(ent), ent->radius * 25.05f, ray_start, ray_end)) 	continue; 	
+				if(!CheckCollisionPointCircle(h->position, EntCenter(ent), ent->radius * 2.05f)) 		continue; 
 
-				Rectangle rec = (Rectangle){ent->position.x, ent->position.y, ent->center_offset.x * 2, ent->center_offset.y *2};
+				//Rectangle rec = (Rectangle){ent->position.x, ent->position.y, ent->center_offset.x * 2, ent->center_offset.y *2};
 				//if(!CheckCollisionPointRec(h->position, rec)) continue;
-				if(!CheckCollisionCircleRec(h->position, 16, rec)) continue;
+				//if(!CheckCollisionCircleRec(h->position, 16, rec)) continue;
 
 				//if(!CheckCollisionCircles(EntCenter(ent), ent->radius * 1.05f, h->position, 25))  		continue;
 

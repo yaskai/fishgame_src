@@ -75,8 +75,8 @@ void EntHandlerInit(EntHandler *handler, SpriteLoader *sprite_loader, Camera2D *
 	handler->fish_collected = 0;
 
 	handler->grid = (Grid){0};
-	handler->grid.row_count = 255;
-	handler->grid.cell_size = 768;
+	handler->grid.row_count = 768;
+	handler->grid.cell_size = 1024;
 	handler->grid.cell_count = (handler->grid.row_count * handler->grid.row_count);
 	handler->grid.cells = calloc(handler->grid.cell_count, sizeof(Cell));
 }
@@ -130,7 +130,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 				// Remove entity from source cell
 				for(uint8_t j = 0; j < cell_src->ent_count - 1; j++) {
 					if(cell_src->ids[j] == ent->id) {
-						for(uint8_t n = j; n < cell_src->ent_count; n++)
+						for(uint8_t n = j; n < cell_src->ent_count - 1; n++)
 							cell_src->ids[n] = cell_src->ids[n + 1];  
 
 						cell_src->ent_count--;
