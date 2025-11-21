@@ -119,6 +119,7 @@ void RopeSolveConstraints(Rope *rope, float dt) {
 	}
 }
 
+//void RopeCollision(Rope *rope, Vector2 min, Vector2 max, float dt) {
 void RopeCollision(Rope *rope, float dt) {
 	if(rope_handler_ptr == NULL) return;
 	EntHandler *handler = rope_handler_ptr;
@@ -131,8 +132,9 @@ void RopeCollision(Rope *rope, float dt) {
 
 		for(uint16_t j = 0; j < handler->count; j++) {
 			Entity *ent = &handler->ents[j];		
-			
+
 			if(!(ent->flags & ENT_IS_BODY)) continue;
+			//if(ent->position.x < min.x || ent->position.x > max.x || ent->position.y < min.y || ent->position.y > max.x) continue;
 
 			Vector2 center = EntCenter(ent);
 			Vector2 to_node = Vector2Subtract(node->pos_curr, center);
@@ -166,15 +168,21 @@ void RopeDiffuse(Rope *rope, float dt) {
 void RopeUpdate(Rope *rope, float dt) {
 	//rope->nodes[0].pos_prev = rope->nodes[0].pos_curr;
 
+	Vector2 center = (Vector2Scale((Vector2){1920, 1080}, 0.5f));
+	Vector2 cc = GetScreenToWorld2D(center, *rope_handler_ptr->camera);
+
+	Vector2 min = Vector2Subtract(center, center);
+	Vector2 max = Vector2Add(center, center);
+
 	for(uint8_t i = 0; i < rope->iterations; i++) {
 		RopeIntegrate(rope, dt);
+		//RopeCollision(rope, min, max, dt);
 		RopeCollision(rope, dt);
 
 		for(uint8_t j = 0; j < 5; j++) { 
 			RopeSolveConstraints(rope, dt);
 		}
 	}
-
 }
 
 void RopeDraw(Rope *rope) {

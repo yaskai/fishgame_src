@@ -46,6 +46,7 @@ void RopeInit(Rope *rope, Vector2 pos);
 void RopeIntegrate(Rope *rope, float dt);
 void RopeSolveConstraints(Rope *rope, float dt);
 void RopeCollision(Rope* rope, float dt);
+//void RopeCollision(Rope* rope, Vector2 min, Vector2 max, float dt);
 void RopeDiffuse(Rope *rope, float dt);
 
 void RopeUpdate(Rope *rope, float dt);

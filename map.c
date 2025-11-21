@@ -95,7 +95,7 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 		Vector2 position;
 		sscanf(val, "%f, %f", &position.x, &position.y);
 		ent->position = Vector2Add(position, (Vector2){2048, 2048});
-		ent->start_pos = position;
+		ent->start_pos = ent->position;
 	}
 }
 

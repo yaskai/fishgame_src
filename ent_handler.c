@@ -89,6 +89,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 	if(IsKeyPressed(KEY_R)) {
 		player_ent->position = player_ent->start_pos;
 		player_ent->velocity = Vector2Zero();
+		p->harpoon.flags &= ~HARPOON_ACTIVE;
 	}
 
 	Grid *grid = &handler->grid;
