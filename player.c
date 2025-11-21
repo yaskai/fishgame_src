@@ -164,7 +164,7 @@ void PlayerCameraControls(Entity *player, float dt) {
 
 	// Rotate
 	float rot_target = -player->angle * RAD2DEG - 90;
-	//cam->rotation = Lerp(cam->rotation, rot_target, dt * 5);
+	cam->rotation = Lerp(cam->rotation, rot_target, dt * 5);
 
 	cam->zoom = CAM_ZOOM_DEFAULT;
 
