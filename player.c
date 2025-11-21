@@ -250,6 +250,7 @@ void PlayerHandleBodyCollision(Entity *player, PlayerData *p, Entity *ent, float
 // Handle player entity's collision response to asteroids
 void PlayerHandleFishCollision(Entity *player, PlayerData *p, Entity *ent, float dt) {
 	if(!(ent->flags & ENT_ACTIVE)) return;
+	if(p->harpoon.state == HARPOON_REEL) return;
 
 	FishData *f = ent->data;
 	
@@ -387,11 +388,11 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 	Cell *player_cell = &grid->cells[h_cell_id];
 		
-	int8_t dir_x[] = { -1, 0, 1 };
-	int8_t dir_y[] = { -1, 0, 1 };
+	int8_t dir_x[] = { -2, -1, 0, 1, 2 };
+	int8_t dir_y[] = { -2, -1, 0, 1, 2 };
 
-	for(uint8_t c = 0; c < 3; c++) {
-		for(uint8_t r = 0; r < 3; r++) {
+	for(uint8_t c = 0; c < 5; c++) {
+		for(uint8_t r = 0; r < 5; r++) {
 			int16_t cell_x = h_cell_x + dir_x[c];
 			int16_t cell_y = h_cell_y + dir_y[r];
 			
