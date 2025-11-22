@@ -141,7 +141,7 @@ void TitleDraw(Game *game, uint8_t flags) {
 
 // Main gameplay loop logic
 void MainUpdate(Game *game, float delta_time) {
-	game->ent_handler.game_timer -= delta_time;
+	//game->ent_handler.game_timer -= delta_time;
 	if(game->ent_handler.game_timer <= 0)
 		game->state = GAME_END;
 
@@ -192,7 +192,7 @@ void MainStart(Game *game) {
 
 	EntHandlerClear(&game->ent_handler);
 
-	MapLoad(&game->ent_handler, "resources/level_aly.lvl");
+	MapLoad(&game->ent_handler, "resources/level.lvl");
 
 	PlayerSetHandler(&game->ent_handler);
 	RopeSetHandler(&game->ent_handler);

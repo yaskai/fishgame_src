@@ -73,6 +73,8 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 	char *sep = strchr(line, ':');
 	if(!sep) return;
 
+	if(line[0] == '#') return;
+
 	*sep = '\0';
 	char *key = line;
 	char *val = sep + 1;
@@ -96,6 +98,7 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 		sscanf(val, "%f, %f", &position.x, &position.y);
 		ent->position = Vector2Add(position, (Vector2){2048, 2048});
 		ent->start_pos = ent->position;
+		ent->prev_pos = ent->position;
 	}
 }
 

@@ -100,6 +100,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 
 		// Skip update if not active
 		if(!(ent->flags & ENT_ACTIVE)) {
+			/*
 			if(ent->type == ENT_FISH) {
 				FishData *f = ent->data;
 				f->timer -= dt;
@@ -115,6 +116,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 				}
 				
 			}
+			*/
 
 			continue;
 		}
@@ -127,15 +129,17 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 			Cell *cell_src  = &grid->cells[src_id];
 
 			// Find destination cell
-			int16_t dest_x  = (uint16_t)(ent->position.x / grid->cell_size);
-			int16_t dest_y  = (uint16_t)(ent->position.y / grid->cell_size);
+			int16_t dest_x  = (uint16_t)(floor(ent->position.x) / grid->cell_size);
+			int16_t dest_y  = (uint16_t)(floor(ent->position.y) / grid->cell_size);
 			int16_t dest_id = (dest_x + dest_y * grid->row_count);
 			Cell *cell_dest  = &grid->cells[dest_id];
 
 			if(src_id != dest_id) {
 				// Remove entity from source cell
 				for(uint8_t j = 0; j < cell_src->ent_count - 1; j++) {
-					if(cell_src->ids[j] == ent->id) {
+					uint16_t id = cell_src->ids[j];
+
+					if(ent->id == id) {
 						for(uint8_t n = j; n < cell_src->ent_count - 1; n++)
 							cell_src->ids[n] = cell_src->ids[n + 1];  
 
@@ -144,13 +148,13 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 					}
 				}
 
-				cell_dest->ids[(cell_dest->ent_count++)] = ent->id;
+				cell_dest->ids[cell_dest->ent_count++] = ent->id;
 			}
 		}
 
 		// Call entity's update function
-		if(ent->update) ent->update(ent, dt * handler->time_mod);
 		ent->prev_pos = ent->position;
+		if(ent->update) ent->update(ent, dt * handler->time_mod);
 	}
 
 	// Find cell containing player entity
@@ -198,20 +202,29 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 
 // Draw all entities
 void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
+	Entity *player_ent = &handler->ents[handler->player_id];	
+
+	/*
 	for(uint16_t i = 0; i < handler->count; i++) {
-		if(i == handler->player_id) continue;
+		//if(i == handler->player_id) continue;
 
 		// Get entity pointer
 		Entity *ent = &handler->ents[i];
 			
 		// Skip draw call if entitiy inactive
-		if(!(ent->flags & ENT_ACTIVE)) continue;
+		//if(!(ent->flags & ENT_ACTIVE)) continue;
 		
 		// Call entity's draw function
-		if(ent->draw) ent->draw(ent, handler->sprite_loader);
+		//if(ent->draw) ent->draw(ent, handler->sprite_loader);
 
 		//DrawText(TextFormat("%d", ent->type), ent->position.x, ent->position.y, 128, RAYWHITE);
+		if(ent->type != ENT_FISH) continue;
+		if(!(ent->flags & ENT_ACTIVE)) continue;
+
+		FishDraw(ent, handler->sprite_loader);
+		DrawLine(EntCenter(ent).x, EntCenter(ent).y, EntCenter(player_ent).x, EntCenter(player_ent).y, GREEN);
 	}
+	*/
 
 	Grid *grid = &handler->grid;
 	uint16_t player_cell_id = (player_cell_x + player_cell_y * grid->row_count);
@@ -226,39 +239,35 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 			int16_t cell_y = player_cell_y + dir_y[r];
 			
 			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) continue;
-
 			Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
+
+			/*
+			Rectangle rec = (Rectangle) {
+				.x = cell_x * grid->cell_size,
+				.y = cell_y * grid->cell_size,
+				.width = grid->cell_size,
+				.height = grid->cell_size
+			};
+
+			DrawRectangleLinesEx(rec, 2, SKYBLUE);
+			DrawText(TextFormat("count: %d", cell->ent_count), rec.x, rec.y, 32, SKYBLUE);
+			*/
 
 			for(uint16_t j = 0; j < cell->ent_count; j++) {
 				Entity *ent = &handler->ents[cell->ids[j]];
 
 				if(!(ent->flags & ENT_ACTIVE)) continue;
 
+				DrawCircleV(EntCenter(ent), 16, RED);
+				
+				//if(ent->type == ENT_FISH) continue;
 				if(ent->draw) ent->draw(ent, handler->sprite_loader);
 			}
 		}
 	}
 
-	Entity *player_ent = &handler->ents[handler->player_id];	
 	PlayerData *p = player_ent->data;
 	player_ent->draw(player_ent, handler->sprite_loader);
-
-	/*
-	Grid *grid = &handler->grid;
-	uint16_t player_cell_x 	= player_ent->position.x / grid->cell_size;
-	uint16_t player_cell_y  = player_ent->position.y / grid->cell_size;
-	uint16_t player_cell_id = (player_cell_x + player_cell_y * grid->row_count);
-	Cell *player_cell = &grid->cells[player_cell_id];
-	
-	Rectangle rec = (Rectangle) {
-		.x = player_cell_x * grid->cell_size,
-		.y = player_cell_y * grid->cell_size,
-		.width = grid->cell_size,
-		.height = grid->cell_size
-	};
-
-	DrawRectangleLinesEx(rec, 2, SKYBLUE);
-	*/
 }
 
 void EntHandlerClear(EntHandler *handler) {
