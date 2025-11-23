@@ -119,7 +119,6 @@ void RopeSolveConstraints(Rope *rope, float dt) {
 	}
 }
 
-//void RopeCollision(Rope *rope, Vector2 min, Vector2 max, float dt) {
 void RopeCollision(Rope *rope, float dt) {
 	if(rope_handler_ptr == NULL) return;
 	EntHandler *handler = rope_handler_ptr;
@@ -176,7 +175,6 @@ void RopeUpdate(Rope *rope, float dt) {
 
 	for(uint8_t i = 0; i < rope->iterations; i++) {
 		RopeIntegrate(rope, dt);
-		//RopeCollision(rope, min, max, dt);
 		RopeCollision(rope, dt);
 
 		for(uint8_t j = 0; j < 5; j++) { 

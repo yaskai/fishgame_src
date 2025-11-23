@@ -16,3 +16,12 @@ float AngleLerp(float a, float b, float t) {
 float ILerp(float a, float b, float t, float delta_time) {
 	return 1 - Lerp(a, b, pow(t, delta_time));
 }
+
+Vector2 GetDirection(Vector2 destination, Vector2 origin) {
+	return Vector2Subtract(destination, origin);
+}
+
+Vector2 GetDirectionNormalized(Vector2 destination, Vector2 origin) {
+	return Vector2Normalize(Vector2Subtract(destination, origin));
+}
+
