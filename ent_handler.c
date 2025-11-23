@@ -7,8 +7,8 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "ent_handler.h"
-#include "entity.h"
 #include "map.h"
+#include "entity.h"
 #include "sprites.h"
 
 uint16_t type_max[] = {
@@ -100,7 +100,6 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 
 		// Skip update if not active
 		if(!(ent->flags & ENT_ACTIVE)) {
-			/*
 			if(ent->type == ENT_FISH) {
 				FishData *f = ent->data;
 				f->timer -= dt;
@@ -116,41 +115,11 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 				}
 				
 			}
-			*/
 
 			continue;
 		}
 
-		if(!Vector2Equals(ent->prev_pos, ent->position)) {
-			// Find origin cell
-			int16_t src_x  = (uint16_t)(ent->prev_pos.x / grid->cell_size);
-			int16_t src_y  = (uint16_t)(ent->prev_pos.y / grid->cell_size);
-			int16_t src_id = (src_x + src_y * grid->row_count);
-			Cell *cell_src  = &grid->cells[src_id];
-
-			// Find destination cell
-			int16_t dest_x  = (uint16_t)(floor(ent->position.x) / grid->cell_size);
-			int16_t dest_y  = (uint16_t)(floor(ent->position.y) / grid->cell_size);
-			int16_t dest_id = (dest_x + dest_y * grid->row_count);
-			Cell *cell_dest  = &grid->cells[dest_id];
-
-			if(src_id != dest_id) {
-				// Remove entity from source cell
-				for(uint8_t j = 0; j < cell_src->ent_count - 1; j++) {
-					uint16_t id = cell_src->ids[j];
-
-					if(ent->id == id) {
-						for(uint8_t n = j; n < cell_src->ent_count - 1; n++)
-							cell_src->ids[n] = cell_src->ids[n + 1];  
-
-						cell_src->ent_count--;
-						break;
-					}
-				}
-
-				cell_dest->ids[cell_dest->ent_count++] = ent->id;
-			}
-		}
+		GridUpdate(handler, ent);
 
 		// Call entity's update function
 		ent->prev_pos = ent->position;
@@ -348,7 +317,7 @@ void ReserveDataAsteroid(EntHandler *handler, Entity *ent) {
 
 	ent->flags |= ENT_IS_BODY;
 
-	printf("reserved data for asteroid entity[%d]\n", data_id);
+	//printf("reserved data for asteroid entity[%d]\n", data_id);
 }
 
 // Reserve data for entity of type "fish"
@@ -372,7 +341,7 @@ void ReserveDataFish(EntHandler *handler, Entity *ent) {
 		handler->sprite_loader->spr_pool[2].frame_h * ent->scale * 0.5f,
 	};
 
-	printf("reserved data for fish entity[%d]\n", data_id);
+	//printf("reserved data for fish entity[%d]\n", data_id);
 }
 
 // Reserve data for entity of type "npc"
@@ -387,40 +356,6 @@ void ReserveDataNpc(EntHandler *handler, Entity *ent) {
 	// Set entity data pointer
 	ent->data = &handler->fish_data[data_id];
 
-	printf("reserved data for npc entity[%d]\n", data_id);
-}
-
-// Spawn an asteroid entity at provided position
-void AsteroidSpawn(EntHandler *handler, Vector2 position, float scale, float angle_vel) {
-	int16_t id = EntMake(handler, ENT_ASTEROID);
-	if(id == -1) return;
-
-	Entity *ast = &handler->ents[id];
-	ast->position = position;
-	ast->type = ENT_ASTEROID;
-	ast->flags |= ENT_IS_BODY;
-
-	ast->angle_vel = angle_vel;
-
-	ast->angle = GetRandomValue(0, 360) * DEG2RAD; 
-	ast->scale = scale;
-
-	ast->radius = handler->sprite_loader->spr_pool[1].frame_w * 0.5f * ast->scale;
-	ast->center_offset = (Vector2){ast->radius / ast->scale, ast->radius / ast->scale};
-}
-
-void FishSpawn(EntHandler *handler, Vector2 position) {
-	int16_t id = EntMake(handler, ENT_FISH);
-	if(id == -1) return;
-	
-	Entity *fish = &handler->ents[id];
-
-	fish->position = position;
-	fish->scale = 1;
-
-	fish->type = ENT_FISH;
-
-	fish->radius = handler->sprite_loader->spr_pool[2].frame_w * 0.5f * fish->scale;
-	fish->center_offset = (Vector2){fish->radius / fish->scale, fish->radius / fish->scale};
+	//printf("reserved data for npc entity[%d]\n", data_id);
 }
 

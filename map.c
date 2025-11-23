@@ -8,7 +8,7 @@
 void MapLoad(EntHandler *handler, char *path) {
 	FILE *pf = fopen(path, "r");
 
-	printf("map: attempting read...\n");
+	//printf("map: attempting read...\n");
 
 	if(!pf) {
 		printf("map: could not load level from path: \n%s\n", path);
@@ -20,7 +20,7 @@ void MapLoad(EntHandler *handler, char *path) {
 
 	uint8_t type;
 
-	printf("map: parsing lines...\n");
+	//printf("map: parsing lines...\n");
 
 	char line[128];
 	while(fgets(line, sizeof(line), pf)) {
@@ -31,7 +31,7 @@ void MapLoad(EntHandler *handler, char *path) {
 			char *last = strchr(line, ']');
 			*last = '\0';
 
-			printf("map: adding entity, name: %s\n", name);
+			//printf("map: adding entity, name: %s\n", name);
 
 			if(!strcmp(name, "player")) {
 				curr_id = EntMake(handler, ENT_PLAYER);
@@ -100,5 +100,43 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 		ent->start_pos = ent->position;
 		ent->prev_pos = ent->position;
 	}
+}
+
+void GridUpdate(EntHandler *handler, Entity *ent) {
+	// Skip entities that haven't moved
+	if(Vector2Equals(ent->prev_pos, ent->position)) return;
+
+	Grid *grid = &handler->grid;
+	
+	// Find origin cell
+	int16_t src_x  = (uint16_t)(ent->prev_pos.x / grid->cell_size);
+	int16_t src_y  = (uint16_t)(ent->prev_pos.y / grid->cell_size);
+	int16_t src_id = (src_x + src_y * grid->row_count);
+	Cell *cell_src  = &grid->cells[src_id];
+
+	// Find destination cell
+	int16_t dest_x  = (uint16_t)(ent->position.x / grid->cell_size);
+	int16_t dest_y  = (uint16_t)(ent->position.y / grid->cell_size);
+	int16_t dest_id = (dest_x + dest_y * grid->row_count);
+	Cell *cell_dest  = &grid->cells[dest_id];
+
+	// Skip entities that have not changed cells
+	if(src_id == dest_id) return;	
+
+	// Remove entity from source cell
+	for(uint8_t j = 0; j < cell_src->ent_count - 1; j++) {
+		uint16_t id = cell_src->ids[j];
+
+		if(ent->id == id) {
+			for(uint8_t n = j; n < cell_src->ent_count - 1; n++)
+				cell_src->ids[n] = cell_src->ids[n + 1];  
+
+			cell_src->ent_count--;
+			break;
+		}
+	}
+
+	// Add entity to destination cell
+	cell_dest->ids[cell_dest->ent_count++] = ent->id;
 }
 

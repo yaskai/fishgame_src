@@ -61,8 +61,6 @@ typedef struct {
 	Grid grid;
 } EntHandler;
 
-void GridUpdate(EntHandler *handler);
-
 void EntHandlerInit(EntHandler *handler, SpriteLoader *sl, Camera2D *camera);
 void EntHandlerUpdate(EntHandler *handler, float dt);
 void EntHandlerDraw(EntHandler *handler, uint8_t flags);

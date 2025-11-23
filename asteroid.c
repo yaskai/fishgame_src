@@ -4,7 +4,7 @@
 
 void AsteroidUpdate(Entity *asteroid, float dt) {
 	EntUpdatePosition(asteroid, dt);
-	//EntSpin(asteroid, dt);
+	EntSpin(asteroid, dt);
 }
 
 void AsteroidDraw(Entity *asteroid, SpriteLoader *sl) {

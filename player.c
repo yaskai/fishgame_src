@@ -382,21 +382,12 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 	Grid *grid = &ptr_player_handler->grid;
 
-	uint16_t h_cell_x 	= h->position.x / grid->cell_size;
-	uint16_t h_cell_y  = h->position.y / grid->cell_size;
-	uint16_t h_cell_id = (h_cell_x + h_cell_y * grid->row_count);
-
-	Cell *player_cell = &grid->cells[h_cell_id];
-		
-	//int8_t dir_x[] = { -2, -1, 0, 1, 2 };
-	//int8_t dir_y[] = { -2, -1, 0, 1, 2 };
-
-	int16_t cell_x = h_cell_x;  
-	int16_t cell_y = h_cell_y; 
+	uint16_t cell_x 	= h->position.x / grid->cell_size;
+	uint16_t cell_y  = h->position.y / grid->cell_size;
+	uint16_t cell_id = (cell_x + cell_y * grid->row_count);
+	Cell *player_cell = &grid->cells[cell_id];
 			
 	if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) return;
-
-	//printf("checking cell[%d, %d] for collisions\n", cell_x, cell_y);
 
 	Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
 

@@ -7,4 +7,6 @@
 void MapLoad(EntHandler *handler, char *path);
 void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line);
 
+void GridUpdate(EntHandler *handler, Entity *ent);
+
 #endif
