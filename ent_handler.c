@@ -365,8 +365,12 @@ void ReserveDataFish(EntHandler *handler, Entity *ent) {
 
 	ent->scale = 1;
 
-	ent->radius = handler->sprite_loader->spr_pool[2].frame_h * 0.5f * ent->scale;
-	ent->center_offset = (Vector2){ent->radius / ent->scale, ent->radius / ent->scale};
+	ent->radius = handler->sprite_loader->spr_pool[2].frame_w * 0.5f * ent->scale;
+
+	ent->center_offset = (Vector2){
+		handler->sprite_loader->spr_pool[2].frame_w * ent->scale * 0.5f,
+		handler->sprite_loader->spr_pool[2].frame_h * ent->scale * 0.5f,
+	};
 
 	printf("reserved data for fish entity[%d]\n", data_id);
 }
