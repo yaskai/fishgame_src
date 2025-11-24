@@ -125,6 +125,7 @@ void RopeCollision(Rope *rope, float dt) {
 
 	rope->coll_count = 0;
 
+	/*
 	for(uint16_t i = 0; i < rope->length - 1; i++) {
 		RopeNode *node = &rope->nodes[i];
 		if(node->flags & NODE_PINNED) continue;
@@ -133,7 +134,6 @@ void RopeCollision(Rope *rope, float dt) {
 			Entity *ent = &handler->ents[j];		
 
 			if(!(ent->flags & ENT_IS_BODY)) continue;
-			//if(ent->position.x < min.x || ent->position.x > max.x || ent->position.y < min.y || ent->position.y > max.x) continue;
 
 			Vector2 center = EntCenter(ent);
 			Vector2 to_node = Vector2Subtract(node->pos_curr, center);
@@ -159,20 +159,69 @@ void RopeCollision(Rope *rope, float dt) {
 			}
 		}	
 	}
+	*/
+
+	Grid *grid = &handler->grid;
+
+	Entity *player_ent = &handler->ents[handler->player_id];
+	PlayerData *player_data = PlayerFetchData(player_ent);	
+
+	int16_t harpoon_cell_x = player_data->harpoon.position.x / grid->cell_size;
+	int16_t harpoon_cell_y = player_data->harpoon.position.y / grid->cell_size;
+	int16_t harpoon_cell_id = (harpoon_cell_x + harpoon_cell_y * grid->row_count);
+
+	Cell cells[2] = { grid->cells[handler->player_cell], grid->cells[harpoon_cell_id] };
+
+	for(uint16_t i = 0; i < ROPE_TAIL; i++) {
+		RopeNode *node = &rope->nodes[i];
+
+		// Skip collision checks on pinned nodes
+		if(node->flags & NODE_PINNED) continue;
+		
+		// Check for collisions with entities within nearby cells
+		for(uint8_t j = 0; j < 2; j++) {
+			Cell *cell = &cells[j];
+
+			for(uint8_t k = 0; k < cell->ent_count; k++) {
+				Entity *ent = &handler->ents[cell->ids[k]];
+
+				// Skip inactive entities
+				if(!(ent->flags & ENT_ACTIVE)) continue;
+
+				// Skip entities not marked as collision bodies
+				if(!(ent->flags & ENT_IS_BODY)) continue;
+				
+				Vector2 center = EntCenter(ent);
+				Vector2 to_node = Vector2Subtract(node->pos_curr, center);
+				float dist = Vector2Length(to_node);
+
+				if(dist <= ent->radius && dist > 0) {
+					Vector2 norm = Vector2Normalize(to_node);
+
+					float depth = ent->radius - dist;
+
+					node->pos_curr = Vector2Add(center, Vector2Scale(norm, ent->radius * 1.01f));
+
+					Vector2 vel = Vector2Subtract(node->pos_curr, node->pos_prev);
+
+					float vel_to_body = Vector2DotProduct(vel, norm);
+					if(vel_to_body < 0) 
+						vel = Vector2Subtract(vel, Vector2Scale(norm, vel_to_body * 1.25f));
+
+					vel = Vector2Scale(vel, -0.01f);
+					node->pos_prev = Vector2Subtract(node->pos_curr, vel);
+
+					rope->coll_count++;
+				}
+			}
+		}
+	}
 }
 
 void RopeDiffuse(Rope *rope, float dt) {
 }
 
 void RopeUpdate(Rope *rope, float dt) {
-	//rope->nodes[0].pos_prev = rope->nodes[0].pos_curr;
-
-	Vector2 center = (Vector2Scale((Vector2){1920, 1080}, 0.5f));
-	Vector2 cc = GetScreenToWorld2D(center, *rope_handler_ptr->camera);
-
-	Vector2 min = Vector2Subtract(center, center);
-	Vector2 max = Vector2Add(center, center);
-
 	for(uint8_t i = 0; i < rope->iterations; i++) {
 		RopeIntegrate(rope, dt);
 		RopeCollision(rope, dt);
@@ -187,28 +236,14 @@ void RopeDraw(Rope *rope) {
 	for(uint16_t i = rope->start_id; i < rope->end_id; i++) {
 		if(rope->nodes[i].flags & NODE_SKIP_DRAW) continue;
 
-		Vector2 p0 = rope->nodes[i].pos_prev;
+		Vector2 p0 = rope->nodes[i].pos_curr;
 		Vector2 p1 = rope->nodes[i + 1].pos_curr;
 
-		float dist = Vector2Distance(p0, p1);
-
-		//DrawCircleV(p0, 6, SKYBLUE);
-
-		if(dist > rope->segment_dist) {
-			float step = 4;
-			float n = 0;
-
-			Vector2 dir = Vector2Normalize(Vector2Subtract(p1, p0));
-
-			while(n < dist) {
-				Vector2 p = Vector2Add(p0, Vector2Scale(dir, n));
-				DrawCircleV(p, 6, SKYBLUE);
-				n += step;
-
-				if(n > dist) break;
-			}
-
-		} else DrawCircleV(p0, 6, SKYBLUE);
+		Vector2 diff = Vector2Subtract(p1, p0);
+		float dist = Vector2Length(diff);
+		
+		DrawCircleV(p0, 6, SKYBLUE);
+		DrawLineEx(p0, p1, 12, SKYBLUE);	
 	}
 }
 

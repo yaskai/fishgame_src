@@ -193,6 +193,7 @@ void MainStart(Game *game) {
 	EntHandlerClear(&game->ent_handler);
 
 	MapLoad(&game->ent_handler, "resources/level.lvl");
+	//MapLoad(&game->ent_handler, "resources/BasicBalance.lvl");
 
 	PlayerSetHandler(&game->ent_handler);
 	RopeSetHandler(&game->ent_handler);

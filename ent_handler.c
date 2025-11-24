@@ -129,9 +129,9 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 	// Find cell containing player entity
 	player_cell_x = player_ent->position.x / grid->cell_size;
 	player_cell_y = player_ent->position.y / grid->cell_size;
-	int16_t player_cell_id = (player_cell_x + player_cell_y * grid->row_count);
+	handler->player_cell = (player_cell_x + player_cell_y * grid->row_count);
 
-	Cell *player_cell = &grid->cells[player_cell_id];
+	Cell *player_cell = &grid->cells[handler->player_cell];
 		
 	int8_t dir_x[] = { -1, 0, 1 };
 	int8_t dir_y[] = { -1, 0, 1 };

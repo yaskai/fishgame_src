@@ -40,6 +40,8 @@ typedef struct {
 
 	uint16_t player_id;
 
+	int16_t player_cell;
+
 	float time_mod;
 	float game_timer;
 
