@@ -15,6 +15,8 @@
 #define CAM_ZOOM_FOCUSED	1.2f
 #define SCREENSHAKE_MAX		10
 
+#define RECOIL_AMOUNT		100.04
+
 EntHandler *ptr_player_handler; 
 void PlayerSetHandler(EntHandler *handler) { ptr_player_handler = handler; }
 
@@ -479,7 +481,7 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 	*p->time_mod = 1.0f;
 
 	// Apply recoil velocity to player entity
-	player->velocity = Vector2Add(player->velocity, Vector2Scale(direction, -200.5f));
+	player->velocity = Vector2Add(player->velocity, Vector2Scale(direction, RECOIL_AMOUNT * -1));
 }
 
 void HarpoonExtend(Entity *player, PlayerData *p, Harpoon *h, float dt) {
