@@ -10,6 +10,7 @@
 #include "map.h"
 #include "entity.h"
 #include "sprites.h"
+#include "config.h"
 
 uint16_t type_max[] = {
 	MAX_PLAYERS,
@@ -115,7 +116,6 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 					fish_data->timer = 0;
 					fish_data->state = FISH_IDLE;
 				}
-				
 			}
 
 			continue;
@@ -216,27 +216,27 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) continue;
 			Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
 
-			/*
-			Rectangle rec = (Rectangle) {
-				.x = cell_x * grid->cell_size,
-				.y = cell_y * grid->cell_size,
-				.width = grid->cell_size,
-				.height = grid->cell_size
-			};
+			if((handler->debug_flags & SHOW_GRID) != 0) {
+				Rectangle rec = (Rectangle) {
+					.x = cell_x * grid->cell_size,
+					.y = cell_y * grid->cell_size,
+					.width = grid->cell_size,
+					.height = grid->cell_size
+				};
 
-			DrawRectangleLinesEx(rec, 2, SKYBLUE);
-			DrawText(TextFormat("count: %d", cell->ent_count), rec.x, rec.y, 32, SKYBLUE);
-			*/
+				DrawRectangleLinesEx(rec, 2, SKYBLUE);
+				DrawText(TextFormat("count: %d", cell->ent_count), rec.x, rec.y, 32, SKYBLUE);
+			}
 
 			for(uint16_t j = 0; j < cell->ent_count; j++) {
 				Entity *ent = &handler->ents[cell->ids[j]];
 
 				if(!(ent->flags & ENT_ACTIVE)) continue;
-
-				DrawCircleV(EntCenter(ent), 16, RED);
 				
 				//if(ent->type == ENT_FISH) continue;
 				if(ent->draw) ent->draw(ent, handler->sprite_loader);
+
+				//DrawCircleV(EntCenter(ent), 16, RED);
 			}
 		}
 	}

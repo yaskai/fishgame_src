@@ -384,48 +384,58 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 	Grid *grid = &ptr_player_handler->grid;
 
-	uint16_t cell_x 	= h->position.x / grid->cell_size;
-	uint16_t cell_y  = h->position.y / grid->cell_size;
-	uint16_t cell_id = (cell_x + cell_y * grid->row_count);
-	Cell *player_cell = &grid->cells[cell_id];
+	uint16_t h_cell_x = h->position.x / grid->cell_size;
+	uint16_t h_cell_y  = h->position.y / grid->cell_size;
+	uint16_t h_cell_id = (h_cell_x + h_cell_y * grid->row_count);
+	Cell *player_cell = &grid->cells[h_cell_id];
 			
-	if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) return;
 
-	Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
+	short dirs_x[] = { -1, 0, 1 };
+	short dirs_y[] = { -1, 0, 1 };
+	
+	for(uint16_t r = 0; r < 3; r++) {
+		for(uint16_t c = 0; c < 3; c++) {
+			int16_t cell_x = h_cell_x + dirs_x[c];
+			int16_t cell_y = h_cell_y + dirs_y[r];
 
-	for(uint16_t j = 0; j < cell->ent_count; j++) {
-		Entity *ent = &ptr_player_handler->ents[cell->ids[j]];
+			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) return;
+			Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
 
-		// Skip checks with inactive entities
-		if(!(ent->flags & ENT_ACTIVE))	continue;
+			for(uint16_t j = 0; j < cell->ent_count; j++) {
+				Entity *ent = &ptr_player_handler->ents[cell->ids[j]];
 
-		// Skip checks with entities not marked as collision bodies
-		if(ent->type == ENT_PLAYER) continue;
-		
-		Vector2 forward = Vector2Normalize(h->velocity);
-		Vector2 ray_start = h->position;
-		Vector2 ray_end = Vector2Add(ray_start, Vector2Scale(forward, 999));
+				// Skip checks with inactive entities
+				if(!(ent->flags & ENT_ACTIVE))	continue;
 
-		if(!CheckCollisionPointCircle(h->position, EntCenter(ent), ent->radius * 1.00f)) 
-			continue; 
+				// Skip checks with entities not marked as collision bodies
+				if(ent->type == ENT_PLAYER) continue;
+				
+				Vector2 forward = Vector2Normalize(h->velocity);
+				Vector2 ray_start = h->position;
+				Vector2 ray_end = Vector2Add(ray_start, Vector2Scale(forward, 999));
 
-		h->state = HARPOON_STUCK;
-		h->velocity = Vector2Zero();
+				if(!CheckCollisionPointCircle(h->position, EntCenter(ent), ent->radius * 1.00f)) 
+					continue; 
 
-		p->rope->nodes[ROPE_TAIL].flags |= NODE_PINNED;
+				h->state = HARPOON_STUCK;
+				h->velocity = Vector2Zero();
 
-		h->hit_id = cell->ids[j];
-		h->hit_pos = h->position;
-		h->hit_angle = ent->angle;
-		h->offset = Vector2Subtract(h->position, ent->position);
-		
-		if(ent->type == ENT_FISH) {
-			h->position = Vector2Add(EntCenter(ent), Vector2Scale(h->offset, 0.5f));
+				p->rope->nodes[ROPE_TAIL].flags |= NODE_PINNED;
 
-			FishData *f = ent->data;
-			f->state = FISH_CAUGHT;
+				h->hit_id = cell->ids[j];
+				h->hit_pos = h->position;
+				h->hit_angle = ent->angle;
+				h->offset = Vector2Subtract(h->position, ent->position);
+				
+				if(ent->type == ENT_FISH) {
+					h->position = Vector2Add(EntCenter(ent), Vector2Scale(h->offset, 0.5f));
 
-			ent->velocity = Vector2Zero();
+					FishData *f = ent->data;
+					f->state = FISH_CAUGHT;
+
+					ent->velocity = Vector2Zero();
+				}
+			}
 		}
 	}
 }

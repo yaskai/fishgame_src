@@ -8,6 +8,9 @@ void ConfigRead(Config *conf, char *path) {
 	// Open file
 	FILE *pF = fopen(path, "r");
 
+	// Clear debug flags
+	conf->debug_flags = 0;
+
 	// Early out and error log if file path invalid
 	if(!pF) {
 		printf("ERROR: Could not open configuration file at: %s\n", path);	
@@ -85,6 +88,22 @@ void ConfigParseLine(Config *conf, char *line) {
 
 			memcpy(conf->level_path, custom_path, sizeof(custom_path));
 		}
+
+	} else if(streq(key, "debug_show_grid")) {
+
+		char *n = strchr(val, '\n');
+		if(n) *n = '\0';
+
+		if(streq(val, "true"))
+			conf->debug_flags |= SHOW_GRID;
+
+		bool on = (conf->debug_flags & SHOW_GRID);
+		printf("debug option, show grid set to: %s\n", (on) ? "true" : "false");
+		
+	} else if(streq(key, "debug_show_colliders")) {
+
+		if(streq(val, "true"))
+			conf->debug_flags |= SHOW_COLLIDERS;
 	}
 }
 

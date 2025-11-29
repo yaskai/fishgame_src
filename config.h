@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
@@ -10,7 +12,12 @@
 #define AUTO "auto"
 #define streq(a, b) (strcmp((a), (b)) == 0)
 
+#define SHOW_GRID		0x01
+#define SHOW_COLLIDERS	0x02
+
 typedef struct {
+	uint8_t debug_flags;
+
 	unsigned int window_width;
 	unsigned int window_height;
 

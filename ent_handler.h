@@ -33,6 +33,8 @@ typedef struct {
 uint16_t cell_wrap(uint16_t i, Grid *grid);
 
 typedef struct {
+	uint8_t debug_flags;
+
 	uint16_t count;
 	uint16_t cap;
 	

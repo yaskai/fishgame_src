@@ -43,6 +43,7 @@ void GameInit(Game *game) {
 	// Initialize entity handler
 	EntHandlerInit(&game->ent_handler, &game->sprite_loader, &game->cam);
 	game->ent_handler.ap = &game->audio_player;
+	game->ent_handler.debug_flags = game->conf.debug_flags;
 }
 
 // Initialize necessary data for rendering the game 
@@ -194,17 +195,11 @@ void MainStart(Game *game) {
 
 	EntHandlerClear(&game->ent_handler);
 
-	//MapLoad(&game->ent_handler, "resources/level.lvl");
-	//MapLoad(&game->ent_handler, "resources/BasicBalance.lvl");
-
 	char level_path[64];
 	strcpy(level_path, "resources/levels/");
 	strcat(level_path, game->conf.level_path);
-	//strcat(level_path, "level.lvl");
-	//printf("level_path: %s\n", level_path);
 
 	MapLoad(&game->ent_handler, level_path);
-	//MapLoad(&game->ent_handler, "resources/levels/level.lvl");
 
 	//printf(">[%s]<\n", game->conf.level_path);
 	//MapLoad(&game->ent_handler, game->conf.level_path);
