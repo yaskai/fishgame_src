@@ -12,11 +12,12 @@
 
 typedef struct {
 	uint8_t flags;
-	uint8_t frame_count;		// Number of frames
-	uint8_t cols, rows;			// Number of columns and rows
+	uint16_t frame_count;		// Number of frames
+	uint16_t cols, rows;		// Number of columns and rows
 
-	uint8_t frame_w, frame_h;	// Width and height of frames
-
+	uint16_t frame_w;			// Frame width
+	uint16_t frame_h;			// Frame height
+	
 	Texture2D texture;			// Source image
 } Spritesheet;
 
@@ -30,9 +31,9 @@ uint8_t FrameIndex(Spritesheet *spritesheet, uint8_t c, uint8_t r);
 Rectangle GetFrameRec(uint8_t idx, Spritesheet *spritesheet);
 
 typedef struct {
-	uint8_t frame_count;		 // Total number of frames 
-	uint8_t start_frame;		 // Which frame is "zero" or first frame
-	uint8_t cur_frame;			 // Which frame should be displayed  
+	uint16_t frame_count;		 // Total number of frames 
+	uint16_t start_frame;		 // Which frame is "zero" or first frame
+	uint16_t cur_frame;			 // Which frame should be displayed  
 
 	float speed;				 // Animation speed
 	float timer;				 // Timer for switching frames
@@ -51,7 +52,9 @@ enum spritesheets {
 	SHEET_PLAYER,
 	SHEET_ASTEROIDS,
 	SHEET_FISH,
-	SHEET_ITEMS
+	SHEET_ITEMS,
+	SHEET_HARPOON,
+	SHEET_PLAYER_AIM,
 };
 
 typedef struct {
@@ -62,7 +65,8 @@ typedef struct {
 	SpriteAnimation anims[SPR_POOL_CAPACITY];
 } SpriteLoader;
 
-void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl);
+//void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl);
+void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl, uint8_t id);
 void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl);
 void SpriteLoaderClose(SpriteLoader *sl);
 

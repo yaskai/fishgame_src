@@ -13,8 +13,8 @@ Spritesheet SpritesheetCreate(char *texture_path, Vector2 frame_dimensions) {
 	}
 
 	// Calculate column and row count
-	uint8_t cols = texture.width  / frame_dimensions.x;
-	uint8_t rows = texture.height / frame_dimensions.y;
+	uint16_t cols = texture.width  / frame_dimensions.x;
+	uint16_t rows = texture.height / frame_dimensions.y;
 	
 	// Return struct 
 	return (Spritesheet) {
@@ -124,6 +124,7 @@ void AnimDrawPro(SpriteAnimation *anim, Vector2 position, float rotation, float 
 }
 
 // Load a spritesheet, push to sprite stack
+/*
 void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl) {
 	Spritesheet ss = SpritesheetCreate(tex_path, frame_dimensions);	
 	if(!(ss.flags & SPR_TEX_VALID)) {
@@ -135,6 +136,19 @@ void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl)
 	printf("spritesheet[%d] loaded to sprite pool\n", sl->spr_count);
 	sl->spr_pool[sl->spr_count++] = ss;
 } 
+*/
+
+void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl, uint8_t id) {
+	Spritesheet ss = SpritesheetCreate(tex_path, frame_dimensions);
+
+	if(!(ss.flags & SPR_TEX_VALID)) {
+		printf("error: spritesheet[%d], missing texture\n", sl->spr_count);
+		return;
+	}
+
+	ss.flags |= SPR_ALLOCATED;
+	sl->spr_pool[id] = ss;
+}
 
 // Create a new sprite animation, push to animation stack
 void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl) {
@@ -144,6 +158,7 @@ void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_
 
 // Unload spritesheets
 void SpriteLoaderClose(SpriteLoader *sl) {
+	/*
 	uint16_t i = 0;
 	while(i < sl->spr_count) {
 		// Skip unallocated spritesheet slots
@@ -153,5 +168,11 @@ void SpriteLoaderClose(SpriteLoader *sl) {
 		printf("spritesheet[%d] unloaded from sprite pool\n", i);
 		SpritesheetClose(&sl->spr_pool[i++]);
 	}
+	*/
+
+	for(uint8_t i = 0; i < SPR_POOL_CAPACITY; i++) {
+		if(!(sl->spr_pool[i].flags & SPR_ALLOCATED)) continue;	
+		SpritesheetClose(&sl->spr_pool[i]);
+	} 
 }
 

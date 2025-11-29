@@ -17,6 +17,7 @@ typedef struct {
 	short look_x, look_y;
 	
 	bool jump;
+	bool aim;
 	bool shoot;
 	bool interact;
 	bool pause;

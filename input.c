@@ -1,31 +1,36 @@
 #include "raylib.h"
 #include "input.h"
 
-void ProcessInput(InputState *state, float delta_time) {
+void ProcessInput(InputState *input, float delta_time) {
 	// Poll input
 	if(IsGamepadAvailable(0))
-		PollInputGamepad(state);
+		PollInputGamepad(input);
 	else
-		PollInputKeyboard(state);
+		PollInputKeyboard(input);
 
-	// TODO: Manage timers
+	// TODO: 
+	// Manage timers
 }
 
-void PollInputKeyboard(InputState *state) {
-	state->move_x = 0;
-	state->move_y = 0;
+void PollInputKeyboard(InputState *input) {
+	input->move_x = 0;
+	input->move_y = 0;
 
-	if(IsKeyDown(KEY_A)) state->move_x = -1;
-	if(IsKeyDown(KEY_D)) state->move_x =  1;
+	if(IsKeyDown(KEY_A)) input->move_x = -1;
+	if(IsKeyDown(KEY_D)) input->move_x =  1;
 
-	if(IsKeyDown(KEY_W)) state->move_y = -1;
-	if(IsKeyDown(KEY_S)) state->move_y =  1;
+	if(IsKeyDown(KEY_W)) input->move_y = -1;
+	if(IsKeyDown(KEY_S)) input->move_y =  1;
 
-	state->jetpack 	= IsKeyDown(KEY_Z);
-	state->jump 	= IsKeyDown(KEY_SPACE);
-	//state->retract 	= IsKeyDown(KEY_R);
-	state->retract = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+	input->jetpack 	= IsKeyDown(KEY_Z);
+	input->jump 	= IsKeyDown(KEY_SPACE);
+	input->aim 		= IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
+	input->retract 	= IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+	input->shoot 	= IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 }
 
-void PollInputGamepad(InputState *state) {
+void PollInputGamepad(InputState *input) {
+	// TODO:
+	// Implement gamepad input polling
 }
+

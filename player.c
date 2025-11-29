@@ -229,7 +229,7 @@ void PlayerHandleBodyCollision(Entity *player, PlayerData *p, Entity *ent, float
 
 	// Calculate penetration
 	float pen = Vector2Length(to_ent) - (player->radius + ent->radius);
-	printf("%f\n", pen);
+	//printf("%f\n", pen);
 
 	// Normalize direction
 	to_ent = Vector2Normalize(to_ent);
@@ -322,7 +322,7 @@ void HarpoonDraw(Entity *player, PlayerData *p, Harpoon *h, SpriteLoader *sl) {
 	// Draw harpoon sprite
 	Vector2 center_offset = (Vector2){51 * 0.5f, 31 * 0.54};
 
-	DrawSpritePro(&sl->spr_pool[3], 0, Vector2Subtract(h->position, center_offset), h->angle * RAD2DEG, 1, 0);
+	DrawSpritePro(&sl->spr_pool[SHEET_HARPOON], 0, Vector2Subtract(h->position, center_offset), h->angle * RAD2DEG, 1, 0);
 }
 
 // Handle input related to harpoon
@@ -404,16 +404,13 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 		Vector2 ray_start = h->position;
 		Vector2 ray_end = Vector2Add(ray_start, Vector2Scale(forward, 999));
 
-		if(!CheckCollisionPointCircle(h->position, EntCenter(ent), ent->radius * 2.05f)) 
+		if(!CheckCollisionPointCircle(h->position, EntCenter(ent), ent->radius * 1.00f)) 
 			continue; 
 
 		h->state = HARPOON_STUCK;
 		h->velocity = Vector2Zero();
 
 		p->rope->nodes[ROPE_TAIL].flags |= NODE_PINNED;
-
-		//if(ent->type == ENT_FISH)
-			//h->position = EntCenter(ent);
 
 		h->hit_id = cell->ids[j];
 		h->hit_pos = h->position;
@@ -438,8 +435,14 @@ void HarpoonAim(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	// Decrease player velocity
 	player->velocity = Vector2Lerp(player->velocity, Vector2Scale(player->velocity, 0.85f), GetFrameTime() * 2.5f);
 
-	if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) { 
+	if(p->input->shoot) { 
 		HarpoonShoot(player, p, h);
+		return;
+	}
+
+	if(p->input->aim) {
+		h->state = HARPOON_NONE; 
+		*p->time_mod = 1;
 		return;
 	}
 }

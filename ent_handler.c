@@ -75,7 +75,7 @@ void EntHandlerInit(EntHandler *handler, SpriteLoader *sprite_loader, Camera2D *
 	handler->fish_collected = 0;
 
 	handler->grid = (Grid){0};
-	handler->grid.row_count = 768;
+	handler->grid.row_count = 128;
 	handler->grid.cell_size = 1024;
 	handler->grid.cell_count = (handler->grid.row_count * handler->grid.row_count);
 	handler->grid.cells = calloc(handler->grid.cell_count, sizeof(Cell));
@@ -100,18 +100,20 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 
 		// Skip update if not active
 		if(!(ent->flags & ENT_ACTIVE)) {
+			// Fish respawn behavior
 			if(ent->type == ENT_FISH) {
-				FishData *f = ent->data;
-				f->timer -= dt;
+				FishData *fish_data = ent->data;
+				fish_data->timer -= dt;
 
-				if(f->timer < 0) {
+				if(fish_data->timer < 0) {
 					ent->flags |= ENT_ACTIVE;
 					ent->velocity = Vector2Zero();
-					ent->position = Vector2Add(ent->start_pos, 
-								(Vector2){GetRandomValue(-30, 30) ,GetRandomValue(-30, 30)});
 
-					f->timer = 0;
-					f->state = FISH_IDLE;
+					ent->position = Vector2Add(
+						ent->start_pos,  (Vector2){GetRandomValue(-30, 30) ,GetRandomValue(-30, 30)});
+
+					fish_data->timer = 0;
+					fish_data->state = FISH_IDLE;
 				}
 				
 			}
@@ -119,10 +121,13 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 			continue;
 		}
 
+		// Update spatial partitioning
 		GridUpdate(handler, ent);
 
-		// Call entity's update function
+		// Save entitiy's previous position for grid update on next frame
 		ent->prev_pos = ent->position;
+
+		// Call entity's update function
 		if(ent->update) ent->update(ent, dt * handler->time_mod);
 	}
 
