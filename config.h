@@ -11,8 +11,12 @@
 #define streq(a, b) (strcmp((a), (b)) == 0)
 
 typedef struct {
-	int windowWidth, windowHeight;
-	float refreshRate;
+	unsigned int window_width;
+	unsigned int window_height;
+
+	float refresh_rate;
+
+	char level_path[128];
 } Config;
 
 void ConfigRead(Config *conf, char *path);

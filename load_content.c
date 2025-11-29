@@ -41,3 +41,4 @@ void LoadSpritesAll(SpriteLoader *sl) {
 
 	LoadSpritesheet("resources/graphics/player/harpoon1.png", (Vector2){51, 38}, sl, SHEET_HARPOON);
 }
+

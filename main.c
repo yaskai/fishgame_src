@@ -21,8 +21,8 @@ int main() {
 
 	// Open window, use values from config file
 	SetConfigFlags(0);
-	InitWindow(game.conf.windowWidth, game.conf.windowHeight, "Fish Game Demo");
-	SetTargetFPS(game.conf.refreshRate);
+	InitWindow(game.conf.window_width, game.conf.window_height, "Fish Game Demo");
+	SetTargetFPS(game.conf.refresh_rate);
 	
 	// Load empty texture for use as a buffer
 	// Buffer is drawn and scaled to window resolution

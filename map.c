@@ -11,7 +11,7 @@ void MapLoad(EntHandler *handler, char *path) {
 	//printf("map: attempting read...\n");
 
 	if(!pf) {
-		printf("map: could not load level from path: \n%s\n", path);
+		printf("\e[0;31mERROR: map, could not load level from path: \e[0;37m \n%s\n", path);
 		return;
 	}
 

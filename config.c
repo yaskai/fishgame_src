@@ -18,7 +18,7 @@ void ConfigRead(Config *conf, char *path) {
 	puts("Reading configuration file...");
 	
 	// Parse config file line by line
-	char line[64];
+	char line[128];
 	while(fgets(line, sizeof(line), pF)) 
 		ConfigParseLine(conf, line);		
 	
@@ -44,34 +44,56 @@ void ConfigParseLine(Config *conf, char *line) {
 		// Window width:    
 		// if auto option provided, set from monitor resolution
 		if(streq(val, AUTO)) 
-			conf->windowWidth = GetMonitorWidth(0);
+			conf->window_width = GetMonitorWidth(0);
 		else 
-			sscanf(val, "%d", &conf->windowWidth);
+			sscanf(val, "%d", &conf->window_width);
 
 	} else if(streq(key, "window_height")) {
 		// Window height:    
 		// if auto option provided, set from monitor resolution
 		if(streq(val, AUTO)) 
-			conf->windowHeight = GetMonitorHeight(0);
+			conf->window_height = GetMonitorHeight(0);
 		else
-			sscanf(val, "%d", &conf->windowHeight);
+			sscanf(val, "%d", &conf->window_height);
 		
 	} else if(streq(key, "refresh_rate")) {
 		// Refresh rate:
 		// if auto option provided, set from monitor refresh rate
 		if(streq(val, AUTO)) 
-			conf->refreshRate = GetMonitorRefreshRate(0);
+			conf->refresh_rate = GetMonitorRefreshRate(0);
 		else 
-			sscanf(val, "%f", &conf->refreshRate);
+			sscanf(val, "%f", &conf->refresh_rate);
+
+	} else if(streq(key, "level_path")) {
+		// Level Path:
+		// for testing purposes
+		if(streq(val, AUTO)) {
+			char default_path[64] = "level.lvl";
+			memcpy(default_path, val, sizeof(default_path));
+
+			char *n = strchr(default_path, '\n');
+			*n = '\0';
+
+			memcpy(conf->level_path, default_path, sizeof(default_path));
+			
+		} else {
+			char custom_path[64];
+			memcpy(custom_path, val, sizeof(custom_path));
+			
+			char *n = strchr(custom_path, '\n');
+			*n = '\0';
+
+			memcpy(conf->level_path, custom_path, sizeof(custom_path));
+		}
 	}
 }
 
 // Set default config options 
 void ConfigSetDefault(Config *conf) {
 	*conf = (Config) {
-		.windowWidth  = CONFIG_DEFAULT_WW,
-		.windowHeight = CONFIG_DEFAULT_WH,
-		.refreshRate  = CONFIG_DEFAULT_RR
+		.window_width  = CONFIG_DEFAULT_WW,
+		.window_height = CONFIG_DEFAULT_WH,
+		.refresh_rate  = CONFIG_DEFAULT_RR
 	};
 
 	ConfigPrintValues(conf);
@@ -79,7 +101,7 @@ void ConfigSetDefault(Config *conf) {
 
 // Print debug messages to shell
 void ConfigPrintValues(Config *conf) {
-	printf("resolution: %dx%d\n", conf->windowWidth, conf->windowHeight);
-	printf("refresh rate: %f\n", conf->refreshRate);
+	printf("resolution: %dx%d\n", conf->window_width, conf->window_height);
+	printf("refresh rate: %f\n", conf->refresh_rate);
 }
 

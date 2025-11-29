@@ -1,4 +1,6 @@
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "game.h"
@@ -51,7 +53,7 @@ void GameRenderInit(Game *game) {
 
 	// Set source and destination rectangle values for window scaling
 	game->render_src_rec  = (Rectangle) { 0, 0, VIRTUAL_WIDTH, -VIRTUAL_HEIGHT };
-	game->render_dest_rec = (Rectangle) { 0, 0, game->conf.windowWidth, game->conf.windowHeight };
+	game->render_dest_rec = (Rectangle) { 0, 0, game->conf.window_width, game->conf.window_height };
 }
 
 // Initialize sprite loader struct, load assets
@@ -192,8 +194,20 @@ void MainStart(Game *game) {
 
 	EntHandlerClear(&game->ent_handler);
 
-	MapLoad(&game->ent_handler, "resources/level.lvl");
+	//MapLoad(&game->ent_handler, "resources/level.lvl");
 	//MapLoad(&game->ent_handler, "resources/BasicBalance.lvl");
+
+	char level_path[64];
+	strcpy(level_path, "resources/levels/");
+	strcat(level_path, game->conf.level_path);
+	//strcat(level_path, "level.lvl");
+	//printf("level_path: %s\n", level_path);
+
+	MapLoad(&game->ent_handler, level_path);
+	//MapLoad(&game->ent_handler, "resources/levels/level.lvl");
+
+	//printf(">[%s]<\n", game->conf.level_path);
+	//MapLoad(&game->ent_handler, game->conf.level_path);
 
 	PlayerSetHandler(&game->ent_handler);
 	RopeSetHandler(&game->ent_handler);
