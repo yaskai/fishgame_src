@@ -125,7 +125,8 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 		GridUpdate(handler, ent);
 
 		// Save entitiy's previous position for grid update on next frame
-		ent->prev_pos = ent->position;
+		//ent->prev_pos = ent->position;
+		ent->prev_pos = EntCenter(ent);
 
 		// Call entity's update function
 		if(ent->update) ent->update(ent, dt * handler->time_mod);
@@ -156,7 +157,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 				Entity *ent = &handler->ents[cell->ids[j]];
 
 				if(ent->type == ENT_ASTEROID) {
-					if(CheckCollisionCircles(EntCenter(player_ent), player_ent->radius, EntCenter(ent), ent->radius * 1.25f))
+					if(CheckCollisionCircles(EntCenter(player_ent), player_ent->radius, EntCenter(ent), ent->radius * 1.05f))
 						PlayerHandleBodyCollision(player_ent, p, ent, dt * handler->time_mod);
 
 				}

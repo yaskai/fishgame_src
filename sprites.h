@@ -46,7 +46,7 @@ void AnimPlay(SpriteAnimation *anim, float delta_time);
 void AnimDraw(SpriteAnimation *anim, Vector2 position, uint8_t flags);
 void AnimDrawPro(SpriteAnimation *anim, Vector2 position, float rotation, float scale, uint8_t flags);
 
-#define SPR_POOL_CAPACITY	255
+#define SPR_POOL_CAPACITY	32
 
 enum spritesheets {
 	SHEET_PLAYER,
