@@ -217,6 +217,9 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 			Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
 
 			if((handler->debug_flags & SHOW_GRID) != 0) {
+				Color color = ColorAlpha(SKYBLUE, 0.5f);
+				if(cell_x == player_cell_x && cell_y == player_cell_y) color = GREEN;
+
 				Rectangle rec = (Rectangle) {
 					.x = cell_x * grid->cell_size,
 					.y = cell_y * grid->cell_size,
@@ -224,8 +227,8 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 					.height = grid->cell_size
 				};
 
-				DrawRectangleLinesEx(rec, 2, SKYBLUE);
-				DrawText(TextFormat("count: %d", cell->ent_count), rec.x, rec.y, 32, SKYBLUE);
+				DrawRectangleLinesEx(rec, 2, color);
+				DrawText(TextFormat("count: %d", cell->ent_count), rec.x, rec.y, 32, color);
 			}
 
 			for(uint16_t j = 0; j < cell->ent_count; j++) {
@@ -350,11 +353,11 @@ void ReserveDataFish(EntHandler *handler, Entity *ent) {
 
 	ent->scale = 1;
 
-	ent->radius = handler->sprite_loader->spr_pool[SHEET_FISH].frame_w * 0.5f * ent->scale;
+	ent->radius = handler->sprite_loader->spr_pool[SHEET_FISH_00].frame_w * 0.5f * ent->scale;
 
 	ent->center_offset = (Vector2){
-		handler->sprite_loader->spr_pool[SHEET_FISH].frame_w * ent->scale * 0.5f,
-		handler->sprite_loader->spr_pool[SHEET_FISH].frame_h * ent->scale * 0.5f,
+		handler->sprite_loader->spr_pool[SHEET_FISH_00].frame_w * ent->scale * 0.5f,
+		handler->sprite_loader->spr_pool[SHEET_FISH_00].frame_h * ent->scale * 0.5f,
 	};
 
 	//printf("reserved data for fish entity[%d]\n", data_id);

@@ -31,38 +31,43 @@ uint8_t FrameIndex(Spritesheet *spritesheet, uint8_t c, uint8_t r);
 Rectangle GetFrameRec(uint8_t idx, Spritesheet *spritesheet);
 
 typedef struct {
-	uint16_t frame_count;		 // Total number of frames 
-	uint16_t start_frame;		 // Which frame is "zero" or first frame
-	uint16_t cur_frame;			 // Which frame should be displayed  
+	uint16_t frame_count;		// Total number of frames 
+	uint16_t start_frame;		// Which frame is "zero" or first frame
+	uint16_t cur_frame;			// Which frame should be displayed  
 
-	float speed;				 // Animation speed
-	float timer;				 // Timer for switching frames
+	uint16_t cycles;			// Number of times animation has been completed  
 
-	Spritesheet *spritesheet; 	 // Pointer to spritesheet instance
+	float speed;				// Animation speed
+	float timer;				// Timer for switching frames
+
+	Spritesheet *spritesheet; 	// Pointer to spritesheet instance
 } SpriteAnimation;
 
 SpriteAnimation AnimCreate(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed);
 void AnimPlay(SpriteAnimation *anim, float delta_time);
 void AnimDraw(SpriteAnimation *anim, Vector2 position, uint8_t flags);
 void AnimDrawPro(SpriteAnimation *anim, Vector2 position, float rotation, float scale, uint8_t flags);
+void AnimReset(SpriteAnimation *anim);
 
-#define SPR_POOL_CAPACITY	32
+#define SPR_POOL_CAPACITY	64
 
 enum SPRITESHEETS {
 	SHEET_PLAYER,
-	SHEET_ASTEROIDS,
-	SHEET_FISH,
-	SHEET_ITEMS,
-	SHEET_HARPOON,
 	SHEET_PLAYER_RECOIL_LFT,
 	SHEET_PLAYER_RECOIL_RGT,
+	SHEET_ASTEROIDS,
+	SHEET_FISH_00,
+	SHEET_FISH_01,
+	SHEET_ITEMS,
+	SHEET_HARPOON,
 };
 
 enum ANIMATIONS {
 	ANIM_PLAYER_SWIM_IDLE,
-	ANIM_FISH_SWIM_00,
 	ANIM_PLAYER_RECOIL_LFT,
 	ANIM_PLAYER_RECOIL_RGT,
+	ANIM_FISH_SWIM_00,
+	ANIM_FISH_SWIM_01,
 };
 
 typedef struct {

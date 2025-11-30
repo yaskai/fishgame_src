@@ -106,8 +106,10 @@ void AnimPlay(SpriteAnimation *anim, float delta_time) {
 	if(anim->timer >= anim->speed) {
 		anim->cur_frame++;
 
-		if(anim->cur_frame - anim->start_frame > anim->frame_count - 1) 
+		if(anim->cur_frame - anim->start_frame > anim->frame_count - 1) { 
 			anim->cur_frame = anim->start_frame;
+			anim->cycles++;
+		}
 
 		anim->timer = 0;
 	}
@@ -121,6 +123,11 @@ void AnimDraw(SpriteAnimation *anim, Vector2 position, uint8_t flags) {
 // Draw current frame of provided sprite animation (with rotation)
 void AnimDrawPro(SpriteAnimation *anim, Vector2 position, float rotation, float scale, uint8_t flags) {
 	DrawSpritePro(anim->spritesheet, anim->cur_frame, position, rotation, scale, flags);
+}
+
+void AnimReset(SpriteAnimation *anim) {
+	anim->cur_frame = 0;
+	anim->cycles = 0;
 }
 
 // Load a spritesheet, push to sprite stack

@@ -39,6 +39,8 @@ Vector2 debug_ray_end[10] = {};
 SpriteAnimation *idle_anim;
 SpriteAnimation *recoil_anims[2];
 
+uint8_t recoil_dir;
+
 // Initialize player, set data, pointers, references, etc.
 void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
 	PlayerData *p = PlayerFetchData(player);
@@ -68,6 +70,8 @@ void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
 	p->rope->anchors[1] = &p->harpoon.position;
 
 	idle_anim = &sl->anims[ANIM_PLAYER_SWIM_IDLE];
+	recoil_anims[0] = &sl->anims[ANIM_PLAYER_RECOIL_LFT]; 
+	recoil_anims[1] = &sl->anims[ANIM_PLAYER_RECOIL_RGT]; 
 }
 
 void PlayerSpawn(Entity *player, Vector2 position) {
@@ -92,19 +96,82 @@ void PlayerUpdate(Entity *player, float dt) {
 	// Upate player sprite angle
 	player->sprite_angle = player->angle * RAD2DEG + 90;
 
-	AnimPlay(idle_anim, dt);
+	// Manage player state
+	switch(p->state) {
+
+		case PLR_IDLE:
+			AnimPlay(idle_anim, dt);
+			break;
+
+		case PLR_RUN:
+			break;
+			
+		case PLR_JUMP:
+			break;
+
+		case PLR_FALL:
+			break;
+
+		case PLR_AIM:
+			break;
+
+		case PLR_SHOOT:
+			break;
+
+		case PLR_RECOIL:
+			AnimPlay(recoil_anims[recoil_dir], dt);
+			
+			if(recoil_anims[recoil_dir]->cycles > 0) {
+				AnimReset(recoil_anims[recoil_dir]);
+				p->state = PLR_IDLE;
+			} 
+
+			break;
+
+		case PLR_DEAD:
+			break;
+	}
 }
 
 // Render player
 void PlayerDraw(Entity *player, SpriteLoader *sl) {
 	PlayerData *p = PlayerFetchData(player);
+	
+	// Draw harpoon sprite and rope
+	HarpoonDraw(player, p, &p->harpoon, sl);
 
 	// Draw player sprite
 	//DrawSpritePro(&sl->spr_pool[player->sprite_id], 0, player->position, player->sprite_angle, player->scale, 0);
-	AnimDrawPro(idle_anim, player->position, player->sprite_angle, player->scale, 0);
+	//AnimDrawPro(idle_anim, player->position, player->sprite_angle, player->scale, 0);
 
-	// Draw harpoon sprite and rope
-	HarpoonDraw(player, p, &p->harpoon, sl);
+	switch(p->state) {
+
+		case PLR_IDLE:
+			AnimDrawPro(idle_anim, player->position, player->sprite_angle, player->scale, 0);
+			break;
+
+		case PLR_RUN:
+			break;
+			
+		case PLR_JUMP:
+			break;
+
+		case PLR_FALL:
+			break;
+
+		case PLR_AIM:
+			break;
+
+		case PLR_SHOOT:
+			break;
+
+		case PLR_RECOIL:
+			AnimDrawPro(recoil_anims[recoil_dir], player->position, player->sprite_angle, player->scale, 0);
+			break;
+
+		case PLR_DEAD:
+			break;
+	}
 }
 
 // Handle input polled from input.c
@@ -467,6 +534,9 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 	Vector2 direction = Vector2Subtract(p->cursor_pos, EntCenter(player));
 	direction = Vector2Normalize(direction);
 
+	//recoil_dir = (Vector2Rotate(direction, player->angle).x < 0) ? 0 : 1;
+	recoil_dir = (GetWorldToScreen2D(p->cursor_pos, *p->camera).x < 1920 * 0.5f) ? 0 : 1;
+
 	// Flag harpoon as active
 	h->flags |= HARPOON_ACTIVE;
 
@@ -493,6 +563,12 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 
 	// Apply recoil velocity to player entity
 	player->velocity = Vector2Add(player->velocity, Vector2Scale(direction, RECOIL_AMOUNT * -1));
+
+	p->state = PLR_RECOIL;
+
+	// Reset recoil animations
+	AnimReset(recoil_anims[0]);
+	AnimReset(recoil_anims[1]);
 }
 
 void HarpoonExtend(Entity *player, PlayerData *p, Harpoon *h, float dt) {
