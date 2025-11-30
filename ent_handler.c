@@ -172,7 +172,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 		}
 	}
 
-	AnimPlay(&handler->sprite_loader->anims[1], dt);
+	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_00], dt);
 }
 
 // Draw all entities
