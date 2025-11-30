@@ -91,6 +91,7 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 		float scale;
 		sscanf(val, "%f", &scale);
 		ent->scale = scale;
+		ent->radius *= ent->scale;
 	}
 
 	else if(!strcmp(key, "position")) {

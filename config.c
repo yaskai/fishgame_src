@@ -102,6 +102,9 @@ void ConfigParseLine(Config *conf, char *line) {
 		
 	} else if(streq(key, "debug_show_colliders")) {
 
+		char *n = strchr(val, '\n');
+		if(n) *n = '\0';
+
 		if(streq(val, "true"))
 			conf->debug_flags |= SHOW_COLLIDERS;
 	}

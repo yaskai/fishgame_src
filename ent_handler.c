@@ -236,13 +236,22 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 				//if(ent->type == ENT_FISH) continue;
 				if(ent->draw) ent->draw(ent, handler->sprite_loader);
 
-				//DrawCircleV(EntCenter(ent), 16, RED);
+				if(handler->debug_flags & SHOW_COLLIDERS) {
+					//DrawCircleV(EntCenter(ent), 16, RED);
+
+					DrawCircleLinesV(EntCenter(ent), ent->radius, GREEN);
+				}
 			}
 		}
 	}
 
 	PlayerData *p = player_ent->data;
 	player_ent->draw(player_ent, handler->sprite_loader);
+}
+
+void EntHandlerClose(EntHandler *handler) {
+	free(handler->ents);
+	free(handler->grid.cells);
 }
 
 void EntHandlerClear(EntHandler *handler) {
@@ -318,7 +327,8 @@ void ReserveDataAsteroid(EntHandler *handler, Entity *ent) {
 	ent->data = &handler->asteroid_data[data_id];
 	ent->scale = 1;
 
-	ent->radius = handler->sprite_loader->spr_pool[1].frame_w * 0.5f * ent->scale;
+	//ent->radius = handler->sprite_loader->spr_pool[1].frame_w * 0.5f * ent->scale;
+	ent->radius = (handler->sprite_loader->spr_pool[SHEET_ASTEROIDS].frame_w * ent->scale) * 0.5f;
 	ent->center_offset = (Vector2){ent->radius / ent->scale, ent->radius / ent->scale};
 
 	ent->flags |= ENT_IS_BODY;

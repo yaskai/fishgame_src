@@ -111,6 +111,7 @@ void GameDrawToWindow(Game *game) {
 
 // Free allocated memory for buffer texture and assets 
 void GameClose(Game *game) {
+	EntHandlerClose(&game->ent_handler);
 	UnloadRenderTexture(render_target);
 	SpriteLoaderClose(&game->sprite_loader);
 	AudioPlayerClose(&game->audio_player);
