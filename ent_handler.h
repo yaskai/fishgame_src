@@ -19,7 +19,7 @@
 
 typedef struct {
 	uint8_t ent_count;
-	uint16_t ids[32];
+	uint16_t ids[64];
 } Cell;
 
 typedef struct {
