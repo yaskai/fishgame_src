@@ -37,6 +37,7 @@ Vector2 debug_ray_start[10] = {};
 Vector2 debug_ray_end[10] = {};
 
 SpriteAnimation *idle_anim;
+SpriteAnimation *recoil_anims[2];
 
 // Initialize player, set data, pointers, references, etc.
 void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
@@ -66,7 +67,7 @@ void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
 	p->rope->anchors[0] = &glob_player_center;
 	p->rope->anchors[1] = &p->harpoon.position;
 
-	idle_anim = &sl->anims[0];
+	idle_anim = &sl->anims[ANIM_PLAYER_SWIM_IDLE];
 }
 
 void PlayerSpawn(Entity *player, Vector2 position) {

@@ -48,13 +48,19 @@ void AnimDrawPro(SpriteAnimation *anim, Vector2 position, float rotation, float 
 
 #define SPR_POOL_CAPACITY	32
 
-enum spritesheets {
+enum SPRITESHEETS {
 	SHEET_PLAYER,
 	SHEET_ASTEROIDS,
 	SHEET_FISH,
 	SHEET_ITEMS,
 	SHEET_HARPOON,
-	SHEET_PLAYER_AIM,
+	SHEET_PLAYER_RECOIL_LFT,
+	SHEET_PLAYER_RECOIL_RGT,
+};
+
+enum ANIMATIONS {
+	ANIM_PLAYER_SWIM_IDLE,
+	ANIM_FISH_SWIM_00,
 };
 
 typedef struct {
@@ -67,7 +73,8 @@ typedef struct {
 
 //void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl);
 void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl, uint8_t id);
-void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl);
+//void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl);
+void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl, uint8_t id);
 void SpriteLoaderClose(SpriteLoader *sl);
 
 void LoadSpritesAll(SpriteLoader *sl);

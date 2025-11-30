@@ -151,9 +151,17 @@ void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl,
 }
 
 // Create a new sprite animation, push to animation stack
+/*
 void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl) {
 	SpriteAnimation anim = AnimCreate(spritesheet, start_frame, frame_count, speed);
 	sl->anims[(sl->anim_count)++] = anim;
+}
+*/
+
+void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl, uint8_t id) {
+	SpriteAnimation anim = AnimCreate(spritesheet, start_frame, frame_count, speed);
+	sl->anims[id] = anim;
+	sl->anim_count++;
 }
 
 // Unload spritesheets
