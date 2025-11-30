@@ -324,6 +324,9 @@ void ReserveDataAsteroid(EntHandler *handler, Entity *ent) {
 
 	// Init data
 	AsteroidData data = (AsteroidData){0};
+
+	data.frame = (handler->type_counts[ENT_ASTEROID] % handler->sprite_loader->spr_pool[SHEET_ASTEROIDS].frame_count - 1);
+
 	handler->asteroid_data[data_id] = data;
 
 	// Set entity data pointers

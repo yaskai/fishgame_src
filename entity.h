@@ -194,7 +194,7 @@ void PlayerFlingStart(Entity *player, PlayerData *p, Harpoon *h);
 typedef struct {
 	uint8_t ex_flags;
 	uint8_t state;
-
+	uint8_t frame;
 } AsteroidData;
 
 void AsteroidUpdate(Entity *asteroid, float dt);

@@ -8,6 +8,8 @@ void AsteroidUpdate(Entity *asteroid, float dt) {
 }
 
 void AsteroidDraw(Entity *asteroid, SpriteLoader *sl) {
-	DrawSpritePro(&sl->spr_pool[SHEET_ASTEROIDS], 0, asteroid->position, asteroid->sprite_angle, asteroid->scale, 0);
+	AsteroidData *ast_data = asteroid->data;
+
+	DrawSpritePro(&sl->spr_pool[SHEET_ASTEROIDS], ast_data->frame, asteroid->position, asteroid->sprite_angle, asteroid->scale, 0);
 	//DrawCircleV(EntCenter(asteroid), asteroid->radius, RED);
 }

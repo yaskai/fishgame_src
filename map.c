@@ -38,10 +38,12 @@ void MapLoad(EntHandler *handler, char *path) {
 				handler->player_id = curr_id;
 
 				type = ENT_PLAYER;
+
 			} else if(!strcmp(name, "asteroid")) {
 				curr_id = EntMake(handler, ENT_ASTEROID);
 
 				type = ENT_ASTEROID;
+
 			} else if(!strcmp(name, "spawner_fish")) {
 				curr_id = EntMake(handler, ENT_FISH);
 				type = ENT_FISH;
@@ -49,6 +51,13 @@ void MapLoad(EntHandler *handler, char *path) {
 
 			curr_ent = &handler->ents[curr_id];
 			curr_ent->type = type;
+
+			/*
+			if(curr_ent->type == ENT_ASTEROID) {
+				AsteroidData *ast_data = curr_ent->data;
+				ast_data->frame = 3;
+			}
+			*/
 
 		} else MapParseLine(handler, curr_id, line);
 	}

@@ -78,9 +78,7 @@ typedef struct {
 	SpriteAnimation anims[SPR_POOL_CAPACITY];
 } SpriteLoader;
 
-//void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl);
 void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl, uint8_t id);
-//void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl);
 void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl, uint8_t id);
 void SpriteLoaderClose(SpriteLoader *sl);
 
