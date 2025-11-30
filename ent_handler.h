@@ -6,7 +6,7 @@
 #ifndef ENT_HANDLER_H
 #define ENT_HANDLER_H
 
-#define ENT_ARENA_CAP	1024	
+#define ENT_ARENA_CAP	2048	
 #define ENT_PLAYER_ID	0
 
 #define MAX_PLAYERS 	1
@@ -19,7 +19,7 @@
 
 typedef struct {
 	uint8_t ent_count;
-	uint16_t ids[64];
+	uint16_t ids[32];
 } Cell;
 
 typedef struct {

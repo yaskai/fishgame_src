@@ -97,35 +97,39 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 	else if(!strcmp(key, "position")) {
 		Vector2 position;
 		sscanf(val, "%f, %f", &position.x, &position.y);
-		ent->position = Vector2Add(position, (Vector2){2048, 2048});
+		//ent->position = Vector2Add(position, (Vector2){2048, 2048});
+		ent->position = position;
 		ent->start_pos = ent->position;
 		ent->prev_pos = ent->position;
 	}
 }
 
 void GridUpdate(EntHandler *handler, Entity *ent) {
-	Vector2 center = EntCenter(ent);
+	//Vector2 center = EntCenter(ent);
 	
 	// Skip entities that haven't moved
-	//if(Vector2Equals(ent->prev_pos, ent->position)) return;
+	if(Vector2Equals(ent->prev_pos, ent->position)) return;
 
-	if(Vector2Length(ent->velocity) == 0) return;
-	if(Vector2Equals(ent->prev_pos, center)) return;
+	//if(Vector2Length(ent->velocity) == 0) return;
+	//if(Vector2Equals(ent->prev_pos, center)) return;
 
 	Grid *grid = &handler->grid;
 	
 	// Find origin cell
-	int16_t src_x  = (int16_t)(ent->prev_pos.x / grid->cell_size);
-	int16_t src_y  = (int16_t)(ent->prev_pos.y / grid->cell_size);
+	int16_t src_x  = (int16_t)(floor(ent->prev_pos.x / grid->cell_size));
+	int16_t src_y  = (int16_t)(floor(ent->prev_pos.y / grid->cell_size));
 	int16_t src_id = (src_x + src_y * grid->row_count);
 	Cell *cell_src  = &grid->cells[src_id];
 
 	// Find destination cell
-	//int16_t dest_x  = (uint16_t)(ent->position.x / grid->cell_size);
-	//int16_t dest_y  = (uint16_t)(ent->position.y / grid->cell_size);
-	int16_t dest_x  = (int16_t)(center.x / grid->cell_size);
-	int16_t dest_y  = (int16_t)(center.y / grid->cell_size);
+	int16_t dest_x  = (uint16_t)(floor(ent->position.x / grid->cell_size));
+	int16_t dest_y  = (uint16_t)(floor(ent->position.y / grid->cell_size));
+	//int16_t dest_x  = (int16_t)(center.x / grid->cell_size);
+	//int16_t dest_y  = (int16_t)(center.y / grid->cell_size);
 	int16_t dest_id = (dest_x + dest_y * grid->row_count);
+
+	if(dest_x < 0 || dest_y < 0 || dest_x >= grid->row_count - 1 || dest_y >= grid->row_count - 1) return;
+
 	Cell *cell_dest  = &grid->cells[dest_id];
 
 	// Skip entities that have not changed cells

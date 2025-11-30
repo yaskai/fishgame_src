@@ -125,8 +125,8 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 		GridUpdate(handler, ent);
 
 		// Save entitiy's previous position for grid update on next frame
-		//ent->prev_pos = ent->position;
-		ent->prev_pos = EntCenter(ent);
+		ent->prev_pos = ent->position;
+		//ent->prev_pos = EntCenter(ent);
 
 		// Call entity's update function
 		if(ent->update) ent->update(ent, dt * handler->time_mod);
@@ -213,7 +213,7 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 			int16_t cell_x = player_cell_x + dir_x[c];
 			int16_t cell_y = player_cell_y + dir_y[r];
 			
-			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) continue;
+			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count - 1 || cell_y >= grid->row_count - 1) continue;
 			Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
 
 			if((handler->debug_flags & SHOW_GRID) != 0) {
