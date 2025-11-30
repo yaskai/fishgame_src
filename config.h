@@ -15,6 +15,14 @@
 #define SHOW_GRID		0x01
 #define SHOW_COLLIDERS	0x02
 
+enum PLATFORMS {
+	PLATFORM_LINUX,
+	PLATFORM_WIN64,
+	PLATFORM_MACOS
+};
+
+#define TARGET_PLATFORM (PLATFORM_LINUX)
+
 typedef struct {
 	uint8_t debug_flags;
 

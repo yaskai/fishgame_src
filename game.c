@@ -197,7 +197,12 @@ void MainStart(Game *game) {
 	EntHandlerClear(&game->ent_handler);
 
 	char level_path[64];
-	strcpy(level_path, "resources/levels/");
+
+	if(TARGET_PLATFORM == PLATFORM_WIN64)
+		strcpy(level_path, "resources\\\\levels\\\\");
+	else
+		strcpy(level_path, "resources/levels/");
+
 	strcat(level_path, game->conf.level_path);
 
 	MapLoad(&game->ent_handler, level_path);
