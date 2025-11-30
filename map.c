@@ -114,13 +114,8 @@ void MapParseLine(EntHandler *handler, int16_t curr_ent, char *line) {
 }
 
 void GridUpdate(EntHandler *handler, Entity *ent) {
-	//Vector2 center = EntCenter(ent);
-	
 	// Skip entities that haven't moved
 	if(Vector2Equals(ent->prev_pos, ent->position)) return;
-
-	//if(Vector2Length(ent->velocity) == 0) return;
-	//if(Vector2Equals(ent->prev_pos, center)) return;
 
 	Grid *grid = &handler->grid;
 	
@@ -133,10 +128,9 @@ void GridUpdate(EntHandler *handler, Entity *ent) {
 	// Find destination cell
 	int16_t dest_x  = (uint16_t)(floor(ent->position.x / grid->cell_size));
 	int16_t dest_y  = (uint16_t)(floor(ent->position.y / grid->cell_size));
-	//int16_t dest_x  = (int16_t)(center.x / grid->cell_size);
-	//int16_t dest_y  = (int16_t)(center.y / grid->cell_size);
 	int16_t dest_id = (dest_x + dest_y * grid->row_count);
 
+	// Skip update if out of bounds
 	if(dest_x < 0 || dest_y < 0 || dest_x >= grid->row_count - 1 || dest_y >= grid->row_count - 1) return;
 
 	Cell *cell_dest  = &grid->cells[dest_id];
@@ -145,14 +139,17 @@ void GridUpdate(EntHandler *handler, Entity *ent) {
 	if(src_id == dest_id) return;	
 
 	// Remove entity from source cell
-	for(uint8_t j = 0; j < cell_src->ent_count - 1; j++) {
+	for(uint8_t j = cell_src->ent_count - 1; j > 0; j--) {
 		uint16_t id = cell_src->ids[j];
 
 		if(ent->id == id) {
+			// Shift array indices one place starting from removed index
 			for(uint8_t n = j; n < cell_src->ent_count - 1; n++)
 				cell_src->ids[n] = cell_src->ids[n + 1];  
 
+			// Decrement count
 			cell_src->ent_count--;
+
 			break;
 		}
 	}

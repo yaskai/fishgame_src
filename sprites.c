@@ -50,7 +50,11 @@ void DrawSpritePro(Spritesheet *spritesheet, uint8_t frame_index, Vector2 positi
 	if(!(spritesheet->flags & SPR_TEX_VALID)) return;
 
 	Rectangle src_rec = GetFrameRec(frame_index, spritesheet);
+
+	// Flip horizontal
 	if(flags & SPR_FLIP_X) src_rec.width  *= -1;
+
+	// Flip vertical
 	if(flags & SPR_FLIP_Y) src_rec.height *= -1;
 
 	DrawTexturePro(
@@ -125,6 +129,7 @@ void AnimDrawPro(SpriteAnimation *anim, Vector2 position, float rotation, float 
 	DrawSpritePro(anim->spritesheet, anim->cur_frame, position, rotation, scale, flags);
 }
 
+// Reset animation state
 void AnimReset(SpriteAnimation *anim) {
 	anim->cur_frame = 0;
 	anim->cycles = 0;
@@ -139,13 +144,20 @@ void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl,
 		return;
 	}
 
+	// Mark spritesheet as allocated
+	// unallocated sprites don't need to be unloaded
 	ss.flags |= SPR_ALLOCATED;
+
+	// Add spritesheet to pool at desired index
 	sl->spr_pool[id] = ss;
 }
 
 // Create a new sprite animation, insert in animation stack
 void AddSpriteAnim(Spritesheet *spritesheet, uint8_t start_frame, uint8_t frame_count, float speed, SpriteLoader *sl, uint8_t id) {
+	// Initialize new animation
 	SpriteAnimation anim = AnimCreate(spritesheet, start_frame, frame_count, speed);
+
+	// Add animation to pool
 	sl->anims[id] = anim;
 	sl->anim_count++;
 }

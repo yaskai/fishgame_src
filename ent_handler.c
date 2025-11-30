@@ -64,17 +64,21 @@ void EntHandlerInit(EntHandler *handler, SpriteLoader *sprite_loader, Camera2D *
 
 	handler->time_mod = 1.0f;
 
+	// Allocate base entity structs
 	handler->ents = calloc(ENT_ARENA_CAP, sizeof(Entity));
 
+	// Allocate entity data
 	handler->player_data 	= calloc(MAX_PLAYERS, sizeof(PlayerData));
 	handler->fish_data 		= calloc(MAX_FISH, sizeof(FishData));
 	handler->npc_data 		= calloc(MAX_NPCS, sizeof(NpcData));
 	handler->asteroid_data 	= calloc(MAX_ASTEROIDS, sizeof(AsteroidData));
 	handler->item_data 		= calloc(MAX_ITEMS, sizeof(ItemData));
 
+	// Set game timer to three minutes, score to 0
 	handler->game_timer = 180.0f;
 	handler->fish_collected = 0;
 
+	// Initialize spatial grid
 	handler->grid = (Grid){0};
 	handler->grid.row_count = 128;
 	handler->grid.cell_size = 1024;
@@ -126,7 +130,6 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 
 		// Save entitiy's previous position for grid update on next frame
 		ent->prev_pos = ent->position;
-		//ent->prev_pos = EntCenter(ent);
 
 		// Call entity's update function
 		if(ent->update) ent->update(ent, dt * handler->time_mod);
@@ -148,8 +151,6 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 			int16_t cell_y = player_cell_y + dir_y[r];
 			
 			if(cell_x < 0 || cell_y < 0 || cell_x >= grid->row_count || cell_y >= grid->row_count) continue;
-
-			//printf("checking cell[%d, %d] for collisions\n", cell_x, cell_y);
 
 			Cell *cell = &grid->cells[cell_x + cell_y * grid->row_count];
 
@@ -239,11 +240,8 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 				//if(ent->type == ENT_FISH) continue;
 				if(ent->draw) ent->draw(ent, handler->sprite_loader);
 
-				if(handler->debug_flags & SHOW_COLLIDERS) {
-					//DrawCircleV(EntCenter(ent), 16, RED);
-
+				if(handler->debug_flags & SHOW_COLLIDERS)
 					DrawCircleLinesV(EntCenter(ent), ent->radius, GREEN);
-				}
 			}
 		}
 	}
@@ -275,11 +273,9 @@ int16_t EntMake(EntHandler *handler, uint8_t type) {
 	
 	// Get entity pointer
 	Entity *ent = &handler->ents[handler->count]; 
-	//ent->type = type;
 
 	// Initialize entity
-	*ent = (Entity){ .type = type };
-	ent->flags |= ENT_ACTIVE;
+	*ent = (Entity){ .type = type, .flags = (ent->flags | ENT_ACTIVE) };
 
 	// Set function pointers
 	ent->update = ent_update_funcs[type];
