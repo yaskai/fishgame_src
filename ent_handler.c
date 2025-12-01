@@ -175,7 +175,8 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 
 	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_00], dt);
 	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_01], dt);
-	//AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_01], dt);
+	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_02], dt);
+	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_03], dt);
 }
 
 // Draw all entities
@@ -347,6 +348,10 @@ void ReserveDataFish(EntHandler *handler, Entity *ent) {
 
 	// Init data
 	FishData data = (FishData){0};
+
+	data.subtype = GetRandomValue(0, 3);
+	uint8_t spr_id = SHEET_FISH_00 + data.subtype;
+
 	handler->fish_data[data_id] = data;
 
 	// Set entity data pointer
@@ -354,11 +359,12 @@ void ReserveDataFish(EntHandler *handler, Entity *ent) {
 
 	ent->scale = 1;
 
-	ent->radius = handler->sprite_loader->spr_pool[SHEET_FISH_00].frame_w * 0.5f * ent->scale;
+
+	ent->radius = handler->sprite_loader->spr_pool[spr_id].frame_w * 0.5f * ent->scale;
 
 	ent->center_offset = (Vector2){
-		handler->sprite_loader->spr_pool[SHEET_FISH_00].frame_w * ent->scale * 0.5f,
-		handler->sprite_loader->spr_pool[SHEET_FISH_00].frame_h * ent->scale * 0.5f,
+		handler->sprite_loader->spr_pool[spr_id].frame_w * ent->scale * 0.5f,
+		handler->sprite_loader->spr_pool[spr_id].frame_h * ent->scale * 0.5f,
 	};
 
 	//printf("reserved data for fish entity[%d]\n", data_id);

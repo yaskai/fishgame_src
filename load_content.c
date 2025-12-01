@@ -46,8 +46,6 @@ void LoadSpritesAll(SpriteLoader *sl) {
 
 	LoadSpritesheet("resources/graphics/fish/fish_00.png", (Vector2){144, 81}, sl, SHEET_FISH_00);
 	AddSpriteAnim(&sl->spr_pool[SHEET_FISH_00], 0, sl->spr_pool[SHEET_FISH_00].frame_count, 0.166f, sl, ANIM_FISH_SWIM_00);
-	
-	// -----------------------------------------------------------------------------------------------------------------------------------------
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// * FISH 01 *
@@ -56,6 +54,17 @@ void LoadSpritesAll(SpriteLoader *sl) {
 	AddSpriteAnim(&sl->spr_pool[SHEET_FISH_01], 0, sl->spr_pool[SHEET_FISH_01].frame_count - 2, 0.166f, sl, ANIM_FISH_SWIM_01);
 	
 	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// * FISH 02 *
 
+	LoadSpritesheet("resources/graphics/fish/fish_02.png", (Vector2){144, 62}, sl, SHEET_FISH_02);
+	AddSpriteAnim(&sl->spr_pool[SHEET_FISH_02], 0, sl->spr_pool[SHEET_FISH_02].frame_count - 2, 0.166f, sl, ANIM_FISH_SWIM_02);
+
+	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// * FISH 03 *
+
+	LoadSpritesheet("resources/graphics/fish/fish_03.png", (Vector2){144, 74}, sl, SHEET_FISH_03);
+	AddSpriteAnim(&sl->spr_pool[SHEET_FISH_03], 0, sl->spr_pool[SHEET_FISH_03].frame_count, 0.166f, sl, ANIM_FISH_SWIM_03);
+
+	// -----------------------------------------------------------------------------------------------------------------------------------------
 }
 

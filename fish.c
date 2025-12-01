@@ -31,16 +31,17 @@ void FishUpdate(Entity *fish, float dt) {
 
 void FishDraw(Entity *fish, SpriteLoader *sl) {
 	FishData *fish_data = fish->data;	
-	//DrawSpritePro(&sl->spr_pool[2], 0, fish->position, fish->sprite_angle, fish->scale, 0);
-	//AnimDraw(&sl->anims[1], fish->position, 0);
  
 	uint8_t draw_flags = 0;
 	if(fish_data->dir.x > 0) draw_flags |= SPR_FLIP_X;
 
+	Spritesheet *sheet = &sl->spr_pool[SHEET_FISH_00 + fish_data->subtype];
+	SpriteAnimation *anim = &sl->anims[ANIM_FISH_SWIM_00 + fish_data->subtype];
+
 	if(fish_data->state == 1)
-		AnimDraw(&sl->anims[ANIM_FISH_SWIM_01], fish->position, draw_flags);
+		AnimDraw(anim, fish->position, draw_flags);
 	else 
-		DrawSpritePro(&sl->spr_pool[SHEET_FISH_01], 0, fish->position, fish->sprite_angle, fish->scale, draw_flags);
+		DrawSpritePro(sheet, 0, fish->position, fish->sprite_angle, fish->scale, draw_flags);
 
 	DrawText(TextFormat("%d", fish->id), fish->position.x, fish->position.y, 32, GREEN);
 }
