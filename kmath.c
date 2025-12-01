@@ -25,3 +25,6 @@ Vector2 GetDirectionNormalized(Vector2 destination, Vector2 origin) {
 	return Vector2Normalize(Vector2Subtract(destination, origin));
 }
 
+Vector2 GetForward(float angle) {
+	return (Vector2) { cosf(angle), sinf(angle) };
+}

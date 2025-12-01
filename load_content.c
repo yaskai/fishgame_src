@@ -2,9 +2,6 @@
 #include "raylib.h"
 #include "sprites.h"
 
-//typedef void(*SpriteLoadFunc)(Game *game);
-//typedef void(*AudioLoadFunc)(Game *game);
-
 #define player_size (Vector2){144, 144}
 
 void LoadSpritesAll(SpriteLoader *sl) {
@@ -20,7 +17,7 @@ void LoadSpritesAll(SpriteLoader *sl) {
 	// * PLAYER SWIM UP *
 
 	LoadSpritesheet("resources/graphics/player/swim_up.png", player_size, sl, SHEET_PLAYER_SWIM_UP);
-	AddSpriteAnim(&sl->spr_pool[SHEET_PLAYER_SWIM_UP], 0, sl->spr_pool[SHEET_PLAYER_SWIM_UP].frame_count, 0.166f, sl, ANIM_PLAYER_SWIM_UP);
+	AddSpriteAnim(&sl->spr_pool[SHEET_PLAYER_SWIM_UP], 0, sl->spr_pool[SHEET_PLAYER_SWIM_UP].frame_count, 0.333f, sl, ANIM_PLAYER_SWIM_UP);
 		
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// * ASTEROIDS *
@@ -51,7 +48,6 @@ void LoadSpritesAll(SpriteLoader *sl) {
 		&sl->spr_pool[SHEET_PLAYER_RECOIL_RGT], 0, sl->spr_pool[SHEET_PLAYER_RECOIL_RGT].frame_count, 0.233f, sl, SHEET_PLAYER_RECOIL_RGT);
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
-
 	
 }
 

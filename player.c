@@ -195,7 +195,7 @@ void PlayerInput(Entity *player, float dt) {
 	} 
 
 	if(input->move_y < 0) {
-		Vector2 dir = (Vector2){cosf(player->angle), sinf(player->angle)};
+		Vector2 dir = GetForward(player->angle);
 		dir = Vector2Normalize(dir);
 
 		player->velocity = Vector2Add(player->velocity, Vector2Scale(dir, 5 * dt));
@@ -306,7 +306,6 @@ void PlayerHandleBodyCollision(Entity *player, PlayerData *p, Entity *ent, float
 
 	// Calculate penetration
 	float pen = Vector2Length(to_ent) - (player->radius + ent->radius);
-	//printf("%f\n", pen);
 
 	// Normalize direction
 	to_ent = Vector2Normalize(to_ent);
@@ -452,8 +451,6 @@ void HarpoonInput(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 }
 
 // Handle harpoon collisions
-// NOTE:
-// Change later when spatial partioning is added
 void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	if(h->state == HARPOON_STUCK) return;
 
@@ -463,7 +460,6 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	uint16_t h_cell_y  = h->position.y / grid->cell_size;
 	uint16_t h_cell_id = (h_cell_x + h_cell_y * grid->row_count);
 	Cell *player_cell = &grid->cells[h_cell_id];
-			
 
 	short dirs_x[] = { -1, 0, 1 };
 	short dirs_y[] = { -1, 0, 1 };
@@ -647,8 +643,6 @@ void HarpoonStuck(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	float dot_min = 0;
 
 	if(hit_ent->angle != h->hit_angle) {
-		//p->rope->iterations = 64;
-
 		Vector2 offset = Vector2Subtract(h->hit_pos, EntCenter(hit_ent));
 		float angle_diff = hit_ent->angle - h->hit_angle;
 
