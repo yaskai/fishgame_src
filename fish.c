@@ -38,9 +38,9 @@ void FishDraw(Entity *fish, SpriteLoader *sl) {
 	if(fish_data->dir.x > 0) draw_flags |= SPR_FLIP_X;
 
 	if(fish_data->state == 1)
-		AnimDraw(&sl->anims[ANIM_FISH_SWIM_00], fish->position, draw_flags);
+		AnimDraw(&sl->anims[ANIM_FISH_SWIM_01], fish->position, draw_flags);
 	else 
-		DrawSpritePro(&sl->spr_pool[SHEET_FISH_00], 0, fish->position, fish->sprite_angle, fish->scale, draw_flags);
+		DrawSpritePro(&sl->spr_pool[SHEET_FISH_01], 0, fish->position, fish->sprite_angle, fish->scale, draw_flags);
 
 	DrawText(TextFormat("%d", fish->id), fish->position.x, fish->position.y, 32, GREEN);
 }

@@ -174,6 +174,8 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 	}
 
 	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_00], dt);
+	AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_01], dt);
+	//AnimPlay(&handler->sprite_loader->anims[ANIM_FISH_SWIM_01], dt);
 }
 
 // Draw all entities
