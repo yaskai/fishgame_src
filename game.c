@@ -214,9 +214,8 @@ void MainStart(Game *game) {
 	RopeSetHandler(&game->ent_handler);
 	
 	Entity *player = &game->ent_handler.ents[game->ent_handler.player_id];
-	//PlayerData *p = game->ent_handler.ents[game->ent_handler.player_id].data;
-	PlayerData *p = player->data;
-	p->input = &game->input_state;
+	PlayerData *player_data = player->data;
+	player_data->input = &game->input_state;
 
 	game->cam.target = EntCenter(player);
 

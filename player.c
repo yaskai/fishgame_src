@@ -38,6 +38,7 @@ Vector2 debug_ray_end[10] = {};
 
 SpriteAnimation *idle_anim;
 SpriteAnimation *recoil_anims[2];
+SpriteAnimation *swim_up_anim;
 
 uint8_t recoil_dir;
 
@@ -72,6 +73,7 @@ void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
 	idle_anim = &sl->anims[ANIM_PLAYER_SWIM_IDLE];
 	recoil_anims[0] = &sl->anims[ANIM_PLAYER_RECOIL_LFT]; 
 	recoil_anims[1] = &sl->anims[ANIM_PLAYER_RECOIL_RGT]; 
+	swim_up_anim = &sl->anims[ANIM_PLAYER_SWIM_UP];
 }
 
 void PlayerSpawn(Entity *player, Vector2 position) {
@@ -103,7 +105,8 @@ void PlayerUpdate(Entity *player, float dt) {
 			AnimPlay(idle_anim, dt);
 			break;
 
-		case PLR_RUN:
+		case PLR_SWIM:
+			AnimPlay(swim_up_anim, dt);
 			break;
 			
 		case PLR_JUMP:
@@ -150,7 +153,8 @@ void PlayerDraw(Entity *player, SpriteLoader *sl) {
 			AnimDrawPro(idle_anim, player->position, player->sprite_angle, player->scale, 0);
 			break;
 
-		case PLR_RUN:
+		case PLR_SWIM:
+			AnimDrawPro(swim_up_anim, player->position, player->sprite_angle, player->scale, 0);
 			break;
 			
 		case PLR_JUMP:
@@ -195,7 +199,10 @@ void PlayerInput(Entity *player, float dt) {
 		dir = Vector2Normalize(dir);
 
 		player->velocity = Vector2Add(player->velocity, Vector2Scale(dir, 5 * dt));
-	}
+
+		p->state = PLR_SWIM;
+	} else
+		p->state = PLR_IDLE;
 
 	// Set jetpack active state
 	jetpack_on = (p->jetpack_cooldown <= 0 && input->jetpack);
@@ -279,7 +286,7 @@ void PlayerApplyJetpack(Entity *player, PlayerData *p, float dt, uint8_t on) {
 	p->jetpack_accel = Clamp(p->jetpack_accel, 100, 1000);
 
 	// Calculate direction
-	Vector2 forward = (Vector2){cosf(player->angle), sinf(player->angle)};
+	Vector2 forward = (Vector2){ cosf(player->angle), sinf(player->angle) };
 	forward = Vector2Normalize(forward);
 
 	// Add velocity calculated by scaling direction by acceleration
@@ -763,38 +770,17 @@ void HarpoonPull(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 void HarpoonReel(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	Entity *fish = &ptr_player_handler->ents[h->hit_id];
 
-	//if(p->rope->segment_dist > 1) p->rope->segment_dist *= 0.999f * dt;
 
-	//Vector2 ftop = Vector2Subtract(Vector2Add(EntCenter(player), Vector2Scale(player->velocity, dt)), EntCenter(fish));
 	Vector2 ftop = Vector2Subtract(Vector2Add(EntCenter(player), Vector2Scale(player->velocity, dt)), EntCenter(fish));
 	ftop = Vector2Normalize(ftop);
 
-	/*
-	for(uint8_t i = 64; i < ROPE_TAIL - 1; i++) {
-		RopeNode *node = &p->rope->nodes[i];
-		
-		Vector2 to_player = Vector2Normalize(Vector2Subtract(node->pos_curr, Vector2Add(EntCenter(player), Vector2Scale(player->velocity, dt)))); 
-
-		//node->pos_curr = Vector2Add(node->pos_curr, Vector2Scale(to_player, 200 * (i * 0.0128f) * dt));
-	}
-	*/
-
 	Vector2 new_center = p->rope->nodes[ROPE_TAIL].pos_curr; 
 	Vector2 new_pos = Vector2Subtract(new_center, fish->center_offset);
-	//h->position = new_pos;
-	//fish->position = new_pos;
 
 	p->rope->nodes[ROPE_TAIL].flags |= NODE_PINNED;
 
 	fish->velocity = Vector2Add(fish->velocity, Vector2Scale(ftop, 5000 * dt));
 	fish->velocity = Vector2Lerp(fish->velocity, Vector2Scale(ftop, 1), dt);
-	
-	/*
-	Vector2 to_node = Vector2Subtract(rope.nodes[64].pos_curr, EntCenter(fish));
-	float dist = Vector2Length(to_node);
-	to_node = Vector2Normalize(to_node);
-	fish->velocity = Vector2Add(fish->velocity, Vector2Scale(to_node, 1000 * dt));
-	*/
 
 	h->position = Vector2Add(EntCenter(fish), Vector2Scale(h->offset, 0.5f));
 
@@ -812,9 +798,6 @@ void HarpoonReel(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 		FishData *f = fish->data;
 		f->timer = GetRandomValue(20, 45);
 	}
-
-	//Vector2 dir = Vector2Normalize(Vector2Subtract(p->rope->nodes[ROPE_TAIL-16].pos_curr, EntCenter(fish)));
-	//h->angle = atan2f(dir.y, dir.x) -;
 
 	RopeUpdate(p->rope, dt);
 }

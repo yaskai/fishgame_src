@@ -128,7 +128,7 @@ typedef struct {
 
 enum PLAYER_STATES {
 	PLR_IDLE,
-	PLR_RUN,
+	PLR_SWIM,
 	PLR_JUMP,
 	PLR_FALL,
 	PLR_AIM,
