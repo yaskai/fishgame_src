@@ -7,13 +7,13 @@
 #define ARG_DEBUG 	0x01
  
 int main() {
-	//SetTraceLogLevel(LOG_INFO);
-	//SetTraceLogLevel(LOG_DEBUG);
-
+	// Initialize audio backend
 	InitAudioDevice();
 	SetMasterVolume(1);
 	
+	// Disable logs
 	SetTraceLogLevel(LOG_ERROR);
+
 	// Initialize game
 	// Set window options, instantiate objects, allocate memory, etc.
 	Game game = {0};
@@ -36,7 +36,7 @@ int main() {
 
 	// Main loop:
 	while(!exit) {
-		exit = (WindowShouldClose() || (game.flags & GAME_QUIT_REQUEST));	
+		exit = ( WindowShouldClose() || (game.flags & GAME_QUIT_REQUEST) );	
 
 		// Update game logic
 		GameUpdate(&game);

@@ -47,9 +47,6 @@ void BgUpdate(Background *bg, float dt) {
 void BgDraw(Background *bg) {
 	Color colors[] = { WHITE, PINK, SKYBLUE, ORANGE };
 
-	//BeginTextureMode(bg->render_texture);
-	//ClearBackground((Color){0});
-
 	for(uint8_t i = 0; i < LAYER_COUNT; i++) {
 		for(uint8_t j = 0; j < STAR_COUNT; j++) {
 			Star *star = &bg->layers[i].stars[j];
@@ -66,13 +63,15 @@ void BgDraw(Background *bg) {
 				fmod(draw_pos.y, bg->src_rec.height) 
 			};
 
-			if(wrap_pos.x < 0) wrap_pos.x += (bg->src_rec.width);
-			if(wrap_pos.y < 0) wrap_pos.y += (bg->src_rec.height);
+			if(wrap_pos.x < 0)
+				wrap_pos.x += (bg->src_rec.width);
 
-			//DrawCircleV(wrap_pos, 1, colors[i]);
-			//DrawCircleV(wrap_pos, star->scale, RAYWHITE);
+			if(wrap_pos.y < 0)
+				wrap_pos.y += (bg->src_rec.height);
 
-			uint16_t frame = (bg->sl->anims[star->anim_id].cur_frame + star->frame_offset) % bg->sl->anims[star->anim_id].frame_count;
+			uint16_t frame = 
+				(bg->sl->anims[star->anim_id].cur_frame + star->frame_offset) % bg->sl->anims[star->anim_id].frame_count;
+
 			DrawSpriteRecolor(
 				&bg->sl->spr_pool[star->sprite_id],
 				frame,
@@ -84,7 +83,5 @@ void BgDraw(Background *bg) {
 			);
 		}
 	};
-
-	//EndTextureMode();
 }
 

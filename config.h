@@ -19,6 +19,9 @@
 #define PLATFORM_LINUX	0
 #define PLATFORM_WIN64	1
 #define PLATFORM_MACOS	2
+
+// **
+// Change when compiling for user
 #define TARGET_PLATFORM (PLATFORM_LINUX)
 
 typedef struct {

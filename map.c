@@ -8,8 +8,6 @@
 void MapLoad(EntHandler *handler, char *path) {
 	FILE *pf = fopen(path, "r");
 
-	//printf("map: attempting read...\n");
-
 	if(!pf) {
 		printf("\e[0;31mERROR: map, could not load level from path: \e[0;37m \n%s\n", path);
 		return;
@@ -19,8 +17,6 @@ void MapLoad(EntHandler *handler, char *path) {
 	Entity *curr_ent = NULL;
 
 	uint8_t type;
-
-	//printf("map: parsing lines...\n");
 
 	char line[128];
 	while(fgets(line, sizeof(line), pf)) {
@@ -52,14 +48,8 @@ void MapLoad(EntHandler *handler, char *path) {
 			curr_ent = &handler->ents[curr_id];
 			curr_ent->type = type;
 
-			/*
-			if(curr_ent->type == ENT_ASTEROID) {
-				AsteroidData *ast_data = curr_ent->data;
-				ast_data->frame = 3;
-			}
-			*/
-
-		} else MapParseLine(handler, curr_id, line);
+		} else 
+			MapParseLine(handler, curr_id, line);
 	}
 
 	fclose(pf);
