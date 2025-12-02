@@ -19,6 +19,8 @@ typedef struct {
 
 typedef struct {
 	Vector2 offset;
+
+	Rectangle src_rec;
 		
 	BackgroundLayer layers[LAYER_COUNT];
 

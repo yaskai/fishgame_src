@@ -8,6 +8,7 @@
 #include "config.h"
 #include "sprites.h"
 #include "map.h"
+#include "kmath.h"
 
 Texture2D controls;
 
@@ -92,8 +93,8 @@ void GameUpdate(Game *game) {
 
 // Render game to buffer texture
 void GameDrawToBuffer(Game *game, uint8_t flags) {
-	if(game->state == GAME_MAIN) 
-		BgDraw(&game->bg);
+	//if(game->state == GAME_MAIN) 
+		//BgDraw(&game->bg);
 
 	BeginTextureMode(render_target);
 	ClearBackground((Color){0});
@@ -109,7 +110,17 @@ void GameDrawToWindow(Game *game) {
 	BeginDrawing();
 	ClearBackground(BLACK);
 
-	DrawTexturePro(game->bg.render_texture.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
+	/*
+	DrawTexturePro(
+		game->bg.render_texture.texture,
+		game->render_src_rec,
+		game->render_dest_rec,
+		//(Vector2){game->bg.src_rec.width / 2, game->bg.src_rec.height / 2},
+		(Vector2){1920.0f / 4, 1080.0f / 4},
+		-game->cam.rotation,
+		WHITE
+	);
+	*/
 	
 	// Draw scaled render_target texture to window 
 	DrawTexturePro(render_target.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
@@ -156,6 +167,16 @@ void MainUpdate(Game *game, float delta_time) {
 	if(game->ent_handler.game_timer <= 0)
 		game->state = GAME_END;
 
+	BgUpdate(&game->bg, delta_time);
+	
+	Entity *player_ent = &game->ent_handler.ents[game->ent_handler.player_id];
+
+	Vector2 forward = GetDirectionNormalized(
+		GetWorldToScreen2D(player_ent->position, game->cam), GetWorldToScreen2D(player_ent->prev_pos, game->cam));
+
+	Vector2 offset_move = Vector2Scale(forward, Vector2Length(player_ent->velocity) * delta_time);
+	game->bg.offset = Vector2Subtract(game->bg.offset, offset_move);
+
 	EntHandlerUpdate(&game->ent_handler, delta_time);
 }
 
@@ -163,12 +184,11 @@ void MainUpdate(Game *game, float delta_time) {
 void MainDraw(Game *game, uint8_t flags) {
 	// No camera transformations:
 
-	// Draw background
-	//BgDraw(&game->bg);
-	//DrawTexturePro(game->bg.render_texture.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
+	BgDraw(&game->bg);
 
 	// With camera transformations:
 	BeginMode2D(game->cam);
+
 	EntHandlerDraw(&game->ent_handler, (SHOW_DEBUG));
 	EndMode2D();
 	
