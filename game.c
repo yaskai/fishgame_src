@@ -55,6 +55,8 @@ void GameRenderInit(Game *game) {
 	// Set source and destination rectangle values for window scaling
 	game->render_src_rec  = (Rectangle) { 0, 0, VIRTUAL_WIDTH, -VIRTUAL_HEIGHT };
 	game->render_dest_rec = (Rectangle) { 0, 0, game->conf.window_width, game->conf.window_height };
+
+	BgInit(&game->bg);
 }
 
 // Initialize sprite loader struct, load assets
@@ -90,8 +92,11 @@ void GameUpdate(Game *game) {
 
 // Render game to buffer texture
 void GameDrawToBuffer(Game *game, uint8_t flags) {
+	if(game->state == GAME_MAIN) 
+		BgDraw(&game->bg);
+
 	BeginTextureMode(render_target);
-	ClearBackground(BLACK);
+	ClearBackground((Color){0});
 
 	// Call state appropriate draw function
 	game_draw_funcs[game->state](game, flags);
@@ -103,6 +108,8 @@ void GameDrawToBuffer(Game *game, uint8_t flags) {
 void GameDrawToWindow(Game *game) {
 	BeginDrawing();
 	ClearBackground(BLACK);
+
+	DrawTexturePro(game->bg.render_texture.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
 	
 	// Draw scaled render_target texture to window 
 	DrawTexturePro(render_target.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
@@ -155,6 +162,10 @@ void MainUpdate(Game *game, float delta_time) {
 // Render objects to buffer texture
 void MainDraw(Game *game, uint8_t flags) {
 	// No camera transformations:
+
+	// Draw background
+	//BgDraw(&game->bg);
+	//DrawTexturePro(game->bg.render_texture.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
 
 	// With camera transformations:
 	BeginMode2D(game->cam);

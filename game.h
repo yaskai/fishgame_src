@@ -6,6 +6,7 @@
 #include "ent_handler.h"
 #include "input.h"
 #include "audioplayer.h"
+#include "bg.h"
 
 #ifndef GAME_H_
 #define GAME_H_
@@ -48,6 +49,7 @@ typedef struct {
 	InputState input_state;
 	SpriteLoader sprite_loader;
 	EntHandler ent_handler;
+	Background bg;
 } Game;
 
 void GameInit(Game *game);
