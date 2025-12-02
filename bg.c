@@ -73,8 +73,6 @@ void BgDraw(Background *bg) {
 			//DrawCircleV(wrap_pos, star->scale, RAYWHITE);
 
 			uint16_t frame = (bg->sl->anims[star->anim_id].cur_frame + star->frame_offset) % bg->sl->anims[star->anim_id].frame_count;
-			//DrawSpritePro(&bg->sl->spr_pool[star->sprite_id], frame, wrap_pos, 0, star->scale * 0.1f, 0);
-
 			DrawSpriteRecolor(
 				&bg->sl->spr_pool[star->sprite_id],
 				frame,
@@ -82,7 +80,7 @@ void BgDraw(Background *bg) {
 				0,
 				star->scale * 0.1f,
 				0,
-				ColorTint(WHITE, colors[star->color_id])
+				colors[star->color_id]
 			);
 		}
 	};

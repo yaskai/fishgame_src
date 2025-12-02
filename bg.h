@@ -5,7 +5,7 @@
 #ifndef BG_H_
 #define BG_H_
 
-#define STAR_COUNT 	128
+#define STAR_COUNT 	 80
 #define LAYER_COUNT	  3
 
 typedef struct {

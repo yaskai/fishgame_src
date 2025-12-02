@@ -22,8 +22,8 @@ void PollInputKeyboard(InputState *input) {
 	if(IsKeyDown(KEY_W)) input->move_y = -1;
 	if(IsKeyDown(KEY_S)) input->move_y =  1;
 
-	input->jetpack 	= IsKeyDown(KEY_Z);
-	input->jump 	= IsKeyDown(KEY_SPACE);
+	input->jetpack 	= IsKeyDown(KEY_SPACE);
+	//input->jump 	= IsKeyDown(KEY_SPACE);
 	input->aim 		= IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
 	input->retract 	= IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
 	input->shoot 	= IsMouseButtonPressed(MOUSE_BUTTON_LEFT);

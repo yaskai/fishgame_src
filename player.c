@@ -70,13 +70,11 @@ void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
 	p->rope->anchors[0] = &glob_player_center;
 	p->rope->anchors[1] = &p->harpoon.position;
 
+	// Set animation pointers
 	idle_anim = &sl->anims[ANIM_PLAYER_SWIM_IDLE];
 	recoil_anims[0] = &sl->anims[ANIM_PLAYER_RECOIL_LFT]; 
 	recoil_anims[1] = &sl->anims[ANIM_PLAYER_RECOIL_RGT]; 
 	swim_up_anim = &sl->anims[ANIM_PLAYER_SWIM_UP];
-}
-
-void PlayerSpawn(Entity *player, Vector2 position) {
 }
 
 // Update player
@@ -200,7 +198,7 @@ void PlayerInput(Entity *player, float dt) {
 
 		player->velocity = Vector2Add(player->velocity, Vector2Scale(dir, 5 * dt));
 
-		if(p->state == PLR_IDLE) 
+		if(p->state == PLR_IDLE && p->jetpack_timer <= 0) 
 			p->state = PLR_SWIM;
 
 	} else {
@@ -287,7 +285,7 @@ void PlayerApplyJetpack(Entity *player, PlayerData *p, float dt, uint8_t on) {
 	} 	
 
 	// Accumulate and clamp acceleration
-	p->jetpack_accel += 500 * dt;
+	p->jetpack_accel += (500 / (p->jetpack_timer + EPSILON)) * dt;
 	p->jetpack_accel = Clamp(p->jetpack_accel, 100, 1000);
 
 	// Calculate direction
