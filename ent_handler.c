@@ -260,9 +260,8 @@ void EntHandlerClose(EntHandler *handler) {
 void EntHandlerClear(EntHandler *handler) {
 	handler->count = 0;
 
-	for(uint8_t i = 0; i < ENT_TYPE_COUNT; i++) {
+	for(uint8_t i = 0; i < ENT_TYPE_COUNT; i++) 
 		handler->type_counts[i] = 0;
-	}
 }
 
 // Create a new entity and add to pool (corresponding to entity type)
@@ -277,7 +276,7 @@ int16_t EntMake(EntHandler *handler, uint8_t type) {
 	Entity *ent = &handler->ents[handler->count]; 
 
 	// Initialize entity
-	*ent = (Entity){ .type = type, .flags = (ent->flags | ENT_ACTIVE) };
+	*ent = (Entity) { .type = type, .flags = (ent->flags | ENT_ACTIVE) };
 
 	// Set function pointers
 	ent->update = ent_update_funcs[type];
@@ -289,7 +288,7 @@ int16_t EntMake(EntHandler *handler, uint8_t type) {
 	// Increment count for entity type
 	(*type_count)++;
 
-	// Return entity's index 
+	// Set and return entity's index 
 	ent->id = handler->count++;
 	return ent->id;
 }
