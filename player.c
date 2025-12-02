@@ -168,7 +168,8 @@ void PlayerDraw(Entity *player, SpriteLoader *sl) {
 			break;
 
 		case PLR_RECOIL:
-			AnimDrawPro(recoil_anims[recoil_dir], player->position, player->sprite_angle, player->scale, 0);
+			//AnimDrawPro(recoil_anims[recoil_dir], player->position, player->sprite_angle, player->scale, 0);
+			DrawSpritePro(recoil_anims[recoil_dir]->spritesheet, 15, player->position, player->sprite_angle, player->scale, 0);
 			break;
 
 		case PLR_DEAD:
@@ -340,6 +341,10 @@ void PlayerHandleFishCollision(Entity *player, PlayerData *p, Entity *ent, float
 	PlayEffect(ptr_player_handler->ap, 0);
 
 	f->timer = GetRandomValue(20, 45);
+
+	if(p->harpoon.hit_id == ent->id) {
+		p->harpoon.state = HARPOON_RETRACT;
+	} 
 }
 
 // Update harpoon and connected components

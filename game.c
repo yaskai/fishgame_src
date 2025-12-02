@@ -164,7 +164,12 @@ void TitleDraw(Game *game, uint8_t flags) {
 
 // Main gameplay loop logic
 void MainUpdate(Game *game, float delta_time) {
-	//game->ent_handler.game_timer -= delta_time;
+	game->ent_handler.game_timer -= delta_time;
+
+	// Tick down game timer
+	if(game->conf.debug_flags & DISABLE_TIMER) 
+		game->ent_handler.game_timer = 180;
+
 	if(game->ent_handler.game_timer <= 0)
 		game->state = GAME_END;
 

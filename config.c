@@ -107,6 +107,15 @@ void ConfigParseLine(Config *conf, char *line) {
 
 		if(streq(val, "true"))
 			conf->debug_flags |= SHOW_COLLIDERS;
+
+	} else if(streq(key, "debug_disable_timer")) {
+
+		char *n = strchr(val, '\n');
+		if(n) *n = '\0';
+
+		if(streq(val, "true"))
+			conf->debug_flags |= DISABLE_TIMER;
+
 	}
 }
 
