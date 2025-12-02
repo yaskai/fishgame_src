@@ -153,13 +153,15 @@ void TitleDraw(Game *game, uint8_t flags) {
 	DrawText(prompt_text, screen_center.x - 160, screen_center.y + 100, 32, RAYWHITE);
 
 	DrawTextureRec(controls, (Rectangle){0, 0, controls.width, controls.height}, (Vector2){0, 0}, WHITE);
+
 	DrawTexturePro(
 		controls,
 		(Rectangle){0, 0, controls.width, controls.height},
 		(Rectangle){0, 0, 1920 * 0.5f, 1080 * 0.5f},
 		(Vector2){0, 0},
 		0, 
-		WHITE);
+		WHITE
+	);
 }
 
 // Main gameplay loop logic
@@ -173,8 +175,12 @@ void MainUpdate(Game *game, float delta_time) {
 	if(game->ent_handler.game_timer <= 0)
 		game->state = GAME_END;
 
+	// Update background
 	BgUpdate(&game->bg, delta_time * game->ent_handler.time_mod);
 	
+	// Calculate background offset value
+	// TODO:
+	// Move somewhere else, encapsulate
 	Entity *player_ent = &game->ent_handler.ents[game->ent_handler.player_id];
 
 	Vector2 forward = GetDirectionNormalized(
@@ -183,6 +189,7 @@ void MainUpdate(Game *game, float delta_time) {
 	Vector2 offset_move = Vector2Scale(forward, Vector2Length(player_ent->velocity) * delta_time * game->ent_handler.time_mod);
 	game->bg.offset = Vector2Subtract(game->bg.offset, offset_move);
 
+	// Update entities
 	EntHandlerUpdate(&game->ent_handler, delta_time);
 }
 
@@ -242,9 +249,6 @@ void MainStart(Game *game) {
 	strcat(level_path, game->conf.level_path);
 
 	MapLoad(&game->ent_handler, level_path);
-
-	//printf(">[%s]<\n", game->conf.level_path);
-	//MapLoad(&game->ent_handler, game->conf.level_path);
 
 	PlayerSetHandler(&game->ent_handler);
 	RopeSetHandler(&game->ent_handler);

@@ -12,9 +12,13 @@ void FishUpdate(Entity *fish, float dt) {
 	if(fish_data->state == FISH_CAUGHT) return;
 
 	fish_data->timer -= dt;
+
 	if(fish_data->timer < 0) {
+
 		fish_data->state++;
+
 		if(fish_data->state == FISH_CAUGHT) fish_data->state = FISH_IDLE; 
+
 		fish_data->timer = GetRandomValue(0, 3);
 
 		if(fish_data->state == FISH_SWIM) {

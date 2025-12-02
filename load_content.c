@@ -78,5 +78,7 @@ void LoadSpritesAll(SpriteLoader *sl) {
 	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_01], 0, sl->spr_pool[SHEET_STAR_01].frame_count, 0.466f, sl, ANIM_STAR_01);
 	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_02], 0, sl->spr_pool[SHEET_STAR_02].frame_count, 0.466f, sl, ANIM_STAR_02);
 	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_03], 0, sl->spr_pool[SHEET_STAR_03].frame_count, 0.466f, sl, ANIM_STAR_03);
+	
+	// -----------------------------------------------------------------------------------------------------------------------------------------
 }
 
