@@ -57,13 +57,14 @@ void GameRenderInit(Game *game) {
 	game->render_src_rec  = (Rectangle) { 0, 0, VIRTUAL_WIDTH, -VIRTUAL_HEIGHT };
 	game->render_dest_rec = (Rectangle) { 0, 0, game->conf.window_width, game->conf.window_height };
 
-	BgInit(&game->bg);
 }
 
 // Initialize sprite loader struct, load assets
 void GameContentInit(Game *game) {
 	game->sprite_loader = (SpriteLoader){0};
 	LoadSpritesAll(&game->sprite_loader);
+
+	BgInit(&game->bg, &game->sprite_loader);
 
 	//game->audio_player = (AudioPlayer){0};
 	AudioPlayerInit(&game->audio_player);
@@ -167,14 +168,14 @@ void MainUpdate(Game *game, float delta_time) {
 	if(game->ent_handler.game_timer <= 0)
 		game->state = GAME_END;
 
-	BgUpdate(&game->bg, delta_time);
+	BgUpdate(&game->bg, delta_time * game->ent_handler.time_mod);
 	
 	Entity *player_ent = &game->ent_handler.ents[game->ent_handler.player_id];
 
 	Vector2 forward = GetDirectionNormalized(
 		GetWorldToScreen2D(player_ent->position, game->cam), GetWorldToScreen2D(player_ent->prev_pos, game->cam));
 
-	Vector2 offset_move = Vector2Scale(forward, Vector2Length(player_ent->velocity) * delta_time);
+	Vector2 offset_move = Vector2Scale(forward, Vector2Length(player_ent->velocity) * delta_time * game->ent_handler.time_mod);
 	game->bg.offset = Vector2Subtract(game->bg.offset, offset_move);
 
 	EntHandlerUpdate(&game->ent_handler, delta_time);
@@ -183,7 +184,6 @@ void MainUpdate(Game *game, float delta_time) {
 // Render objects to buffer texture
 void MainDraw(Game *game, uint8_t flags) {
 	// No camera transformations:
-
 	BgDraw(&game->bg);
 
 	// With camera transformations:

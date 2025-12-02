@@ -11,6 +11,8 @@
 #define SPR_FLIP_Y	   	0x10
 
 typedef struct {
+	uint8_t id;
+
 	uint8_t flags;
 	uint16_t frame_count;		// Number of frames
 	uint16_t cols, rows;		// Number of columns and rows
@@ -26,6 +28,7 @@ void SpritesheetClose(Spritesheet *spritesheet);
 
 void DrawSprite(Spritesheet *spritesheet, uint8_t frame_index, Vector2 position, uint8_t flags);
 void DrawSpritePro(Spritesheet *spritesheet, uint8_t frame_index, Vector2 position, float rotation, float scale, uint8_t flags);
+void DrawSpriteRecolor(Spritesheet *spritesheet, uint8_t frame_index, Vector2 position, float rotation, float scale, uint8_t flags, Color color);
 
 uint8_t FrameIndex(Spritesheet *spritesheet, uint8_t c, uint8_t r);
 Rectangle GetFrameRec(uint8_t idx, Spritesheet *spritesheet);

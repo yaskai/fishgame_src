@@ -2,7 +2,8 @@
 #include "raylib.h"
 #include "sprites.h"
 
-#define player_size (Vector2){144, 144}
+#define PLAYER_SIZE (Vector2){144, 144}
+#define STAR_SIZE 	(Vector2){67, 67}
 
 void LoadSpritesAll(SpriteLoader *sl) {
 	puts("Loading sprites...");
@@ -10,13 +11,13 @@ void LoadSpritesAll(SpriteLoader *sl) {
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// * PLAYER IDLE *
 
-	LoadSpritesheet("resources/graphics/player/swim_idle.png", player_size, sl, SHEET_PLAYER);
+	LoadSpritesheet("resources/graphics/player/swim_idle.png", PLAYER_SIZE, sl, SHEET_PLAYER);
 	AddSpriteAnim(&sl->spr_pool[SHEET_PLAYER], 0, sl->spr_pool[SHEET_PLAYER].frame_count, 0.166f, sl, ANIM_PLAYER_SWIM_IDLE);
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// * PLAYER SWIM UP *
 
-	LoadSpritesheet("resources/graphics/player/swim_up.png", player_size, sl, SHEET_PLAYER_SWIM_UP);
+	LoadSpritesheet("resources/graphics/player/swim_up.png", PLAYER_SIZE, sl, SHEET_PLAYER_SWIM_UP);
 	AddSpriteAnim(&sl->spr_pool[SHEET_PLAYER_SWIM_UP], 0, sl->spr_pool[SHEET_PLAYER_SWIM_UP].frame_count, 0.333f, sl, ANIM_PLAYER_SWIM_UP);
 		
 	// -----------------------------------------------------------------------------------------------------------------------------------------
@@ -32,8 +33,8 @@ void LoadSpritesAll(SpriteLoader *sl) {
 	// -----------------------------------------------------------------------------------------------------------------------------------------
 	// * PLAYER RECOIL *
 
-	LoadSpritesheet("resources/graphics/player/recoil_lft.png", player_size, sl, SHEET_PLAYER_RECOIL_LFT);
-	LoadSpritesheet("resources/graphics/player/recoil_rgt.png", player_size, sl, SHEET_PLAYER_RECOIL_RGT);
+	LoadSpritesheet("resources/graphics/player/recoil_lft.png", PLAYER_SIZE, sl, SHEET_PLAYER_RECOIL_LFT);
+	LoadSpritesheet("resources/graphics/player/recoil_rgt.png", PLAYER_SIZE, sl, SHEET_PLAYER_RECOIL_RGT);
 
 	AddSpriteAnim(
 		&sl->spr_pool[SHEET_PLAYER_RECOIL_LFT], 0, sl->spr_pool[SHEET_PLAYER_RECOIL_LFT].frame_count, 0.233f, sl, ANIM_PLAYER_RECOIL_LFT);
@@ -66,5 +67,16 @@ void LoadSpritesAll(SpriteLoader *sl) {
 	AddSpriteAnim(&sl->spr_pool[SHEET_FISH_03], 0, sl->spr_pool[SHEET_FISH_03].frame_count, 0.166f, sl, ANIM_FISH_SWIM_03);
 
 	// -----------------------------------------------------------------------------------------------------------------------------------------
+	// * BACKGROUND STARS *
+
+	LoadSpritesheet("resources/graphics/background/medium.png",			STAR_SIZE, sl, SHEET_STAR_00);
+	LoadSpritesheet("resources/graphics/background/slow.png",			STAR_SIZE, sl, SHEET_STAR_01);
+	LoadSpritesheet("resources/graphics/background/slow_short.png", 	STAR_SIZE, sl, SHEET_STAR_02);
+	LoadSpritesheet("resources/graphics/background/medium_short.png", 	STAR_SIZE, sl, SHEET_STAR_03);
+
+	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_00], 0, sl->spr_pool[SHEET_STAR_00].frame_count, 0.466f, sl, ANIM_STAR_00);
+	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_01], 0, sl->spr_pool[SHEET_STAR_01].frame_count, 0.466f, sl, ANIM_STAR_01);
+	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_02], 0, sl->spr_pool[SHEET_STAR_02].frame_count, 0.466f, sl, ANIM_STAR_02);
+	AddSpriteAnim(&sl->spr_pool[SHEET_STAR_03], 0, sl->spr_pool[SHEET_STAR_03].frame_count, 0.466f, sl, ANIM_STAR_03);
 }
 

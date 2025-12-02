@@ -2,9 +2,12 @@
 #include <string.h>
 #include <math.h>
 #include "raylib.h"
+#include "sprites.h"
 #include "bg.h"
 
-void BgInit(Background *bg) {
+void BgInit(Background *bg, SpriteLoader *sl) {
+	bg->sl = sl;
+
 	bg->src_rec = (Rectangle) {
 		.x = 0,
 		.y = 0,
@@ -19,6 +22,14 @@ void BgInit(Background *bg) {
 
 		for(uint8_t j = 0; j < STAR_COUNT; j++) {
 			stars[j].position = (Vector2){ GetRandomValue(0, bg->src_rec.width), GetRandomValue(0, bg->src_rec.height)};
+			stars[j].scale = GetRandomValue(5, 20) * 0.1f;
+
+			stars[j].anim_id = GetRandomValue(ANIM_STAR_00, ANIM_STAR_03);
+			stars[j].frame_offset = GetRandomValue(0, bg->sl->anims[stars[j].anim_id].frame_count - 1);
+
+			stars[j].sprite_id = bg->sl->anims[stars[j].anim_id].spritesheet->id;
+
+			stars[j].color_id = GetRandomValue(0, 4);
 		}
 
 		memcpy(bg->layers[i].stars, stars, sizeof(stars));
@@ -28,10 +39,13 @@ void BgInit(Background *bg) {
 }
 
 void BgUpdate(Background *bg, float dt) {
+	for(uint8_t i = ANIM_STAR_00; i < ANIM_STAR_03; i++) {
+		AnimPlay(&bg->sl->anims[i], dt);
+	}
 }
 
 void BgDraw(Background *bg) {
-	Color colors[3] = { RAYWHITE, RED, SKYBLUE };
+	Color colors[] = { WHITE, PINK, SKYBLUE, ORANGE };
 
 	//BeginTextureMode(bg->render_texture);
 	//ClearBackground((Color){0});
@@ -56,7 +70,20 @@ void BgDraw(Background *bg) {
 			if(wrap_pos.y < 0) wrap_pos.y += (bg->src_rec.height);
 
 			//DrawCircleV(wrap_pos, 1, colors[i]);
-			DrawCircleV(wrap_pos, 1, colors[i]);
+			//DrawCircleV(wrap_pos, star->scale, RAYWHITE);
+
+			uint16_t frame = (bg->sl->anims[star->anim_id].cur_frame + star->frame_offset) % bg->sl->anims[star->anim_id].frame_count;
+			//DrawSpritePro(&bg->sl->spr_pool[star->sprite_id], frame, wrap_pos, 0, star->scale * 0.1f, 0);
+
+			DrawSpriteRecolor(
+				&bg->sl->spr_pool[star->sprite_id],
+				frame,
+				wrap_pos,
+				0,
+				star->scale * 0.1f,
+				0,
+				ColorTint(WHITE, colors[star->color_id])
+			);
 		}
 	};
 

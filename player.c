@@ -200,9 +200,14 @@ void PlayerInput(Entity *player, float dt) {
 
 		player->velocity = Vector2Add(player->velocity, Vector2Scale(dir, 5 * dt));
 
-		p->state = PLR_SWIM;
-	} else
-		p->state = PLR_IDLE;
+		if(p->state == PLR_IDLE) 
+			p->state = PLR_SWIM;
+
+	} else {
+
+		if(p->state == PLR_SWIM)
+			p->state = PLR_IDLE;
+	}
 
 	// Set jetpack active state
 	jetpack_on = (p->jetpack_cooldown <= 0 && input->jetpack);

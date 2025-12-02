@@ -74,6 +74,36 @@ void DrawSpritePro(Spritesheet *spritesheet, uint8_t frame_index, Vector2 positi
 	);
 }
 
+// Draw a spritesheet frame from base texture at provided position (with rotation)
+void DrawSpriteRecolor(Spritesheet *spritesheet, uint8_t frame_index, Vector2 position, float rotation, float scale, uint8_t flags, Color color) {
+	if(!(spritesheet->flags & SPR_TEX_VALID)) return;
+
+	Rectangle src_rec = GetFrameRec(frame_index, spritesheet);
+
+	// Flip horizontal
+	if(flags & SPR_FLIP_X) src_rec.width  *= -1;
+
+	// Flip vertical
+	if(flags & SPR_FLIP_Y) src_rec.height *= -1;
+
+	DrawTexturePro(
+		spritesheet->texture,
+		src_rec,
+
+		(Rectangle) {
+			position.x + (spritesheet->frame_w * 0.5f),
+			position.y + (spritesheet->frame_h * 0.5f),
+			spritesheet->frame_w * scale,
+			spritesheet->frame_h * scale
+		},
+
+		(Vector2){(spritesheet->frame_w * 0.5f) * scale, (spritesheet->frame_h * 0.5f) * scale},
+		rotation,
+
+		color	
+	);
+}
+
 // Find index of frame from it's column and row values
 uint8_t FrameIndex(Spritesheet *spritesheet, uint8_t c, uint8_t r) {
 	return (c + r * spritesheet->cols);
@@ -147,6 +177,8 @@ void LoadSpritesheet(char *tex_path, Vector2 frame_dimensions, SpriteLoader *sl,
 	// Mark spritesheet as allocated
 	// unallocated sprites don't need to be unloaded
 	ss.flags |= SPR_ALLOCATED;
+
+	ss.id = id;
 
 	// Add spritesheet to pool at desired index
 	sl->spr_pool[id] = ss;
