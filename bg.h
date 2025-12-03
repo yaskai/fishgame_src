@@ -22,7 +22,7 @@ typedef struct {
 typedef struct {
 	float scroll_mod; 
 
-	Star stars[STAR_COUNT];
+	Star *stars;
 } BackgroundLayer;
 
 typedef struct {

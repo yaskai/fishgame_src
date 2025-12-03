@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
+#include <stdlib.h>
 #include "raylib.h"
 #include "sprites.h"
 #include "bg.h"
@@ -18,21 +19,21 @@ void BgInit(Background *bg, SpriteLoader *sl) {
 	bg->render_texture = LoadRenderTexture(bg->src_rec.width, bg->src_rec.height);
 	
 	for(uint8_t i = 0; i < LAYER_COUNT; i++) {
-		Star stars[STAR_COUNT] = {0};
+		bg->layers[i].stars = calloc(STAR_COUNT, sizeof(Star));
 
 		for(uint8_t j = 0; j < STAR_COUNT; j++) {
-			stars[j].position = (Vector2){ GetRandomValue(0, bg->src_rec.width), GetRandomValue(0, bg->src_rec.height)};
-			stars[j].scale = GetRandomValue(5, 20) * 0.1f;
+			Star *star = &bg->layers[i].stars[j];
 
-			stars[j].anim_id = GetRandomValue(ANIM_STAR_00, ANIM_STAR_03);
-			stars[j].frame_offset = GetRandomValue(0, bg->sl->anims[stars[j].anim_id].frame_count - 1);
+			star->position = (Vector2){ GetRandomValue(0, bg->src_rec.width), GetRandomValue(0, bg->src_rec.height)};
+			star->scale = GetRandomValue(5, 20) * 0.1f;
 
-			stars[j].sprite_id = bg->sl->anims[stars[j].anim_id].spritesheet->id;
+			star->anim_id = GetRandomValue(ANIM_STAR_00, ANIM_STAR_03);
+			star->frame_offset = GetRandomValue(0, bg->sl->anims[star->anim_id].frame_count - 1);
 
-			stars[j].color_id = GetRandomValue(0, 4);
+			star->sprite_id = bg->sl->anims[star->anim_id].spritesheet->id;
+
+			star->color_id = GetRandomValue(0, 4);
 		}
-
-		memcpy(bg->layers[i].stars, stars, sizeof(stars));
 
 		bg->layers[i].scroll_mod = 0.1f + ((i+1) * 0.1f);
 	}
