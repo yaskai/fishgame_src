@@ -6,6 +6,8 @@
 #include "raymath.h"
 
 void MapLoad(EntHandler *handler, char *path) {
+	puts("Loading map...");
+
 	FILE *pf = fopen(path, "r");
 
 	if(!pf) {
@@ -59,11 +61,14 @@ void MapLoad(EntHandler *handler, char *path) {
 		Entity *ent = &handler->ents[i];
 		if(!(ent->flags & ENT_ACTIVE)) continue;
 
-		uint16_t cell_x  = ent->position.x / handler->grid.cell_size;
-		uint16_t cell_y  = ent->position.y / handler->grid.cell_size;
+		uint16_t cell_x  = floor(ent->position.x / handler->grid.cell_size);
+		uint16_t cell_y  = floor(ent->position.y / handler->grid.cell_size);
 		uint16_t cell_id = (cell_x + cell_y * handler->grid.row_count);
+
+		if(cell_id < 0 || cell_id > handler->grid.cell_count - 1) 
+			continue;
+
 		Cell *cell = &handler->grid.cells[cell_id];	
-		
 		cell->ids[cell->ent_count++] = i;
 	}
 }
@@ -113,7 +118,6 @@ void GridUpdate(EntHandler *handler, Entity *ent) {
 	int16_t src_x  = (int16_t)(floor(ent->prev_pos.x / grid->cell_size));
 	int16_t src_y  = (int16_t)(floor(ent->prev_pos.y / grid->cell_size));
 	int16_t src_id = (src_x + src_y * grid->row_count);
-	Cell *cell_src  = &grid->cells[src_id];
 
 	// Find destination cell
 	int16_t dest_x  = (uint16_t)(floor(ent->position.x / grid->cell_size));
@@ -123,6 +127,7 @@ void GridUpdate(EntHandler *handler, Entity *ent) {
 	// Skip update if out of bounds
 	if(dest_x < 0 || dest_y < 0 || dest_x >= grid->row_count - 1 || dest_y >= grid->row_count - 1) return;
 
+	Cell *cell_src  = &grid->cells[src_id];
 	Cell *cell_dest  = &grid->cells[dest_id];
 
 	// Skip entities that have not changed cells
@@ -145,6 +150,7 @@ void GridUpdate(EntHandler *handler, Entity *ent) {
 	}
 
 	// Add entity to destination cell
+	if(cell_dest->ent_count - 1 >= handler->cell_ent_cap) return;
 	cell_dest->ids[cell_dest->ent_count++] = ent->id;
 }
 

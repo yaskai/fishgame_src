@@ -84,6 +84,13 @@ void EntHandlerInit(EntHandler *handler, SpriteLoader *sprite_loader, Camera2D *
 	handler->grid.cell_size = 1024;
 	handler->grid.cell_count = (handler->grid.row_count * handler->grid.row_count);
 	handler->grid.cells = calloc(handler->grid.cell_count, sizeof(Cell));
+
+	printf("cell_ent_cap: %d\n", handler->cell_ent_cap);	
+
+	for(uint16_t i = 0; i < handler->grid.cell_count; i++) {
+		Cell *cell = &handler->grid.cells[i];
+		cell->ids = calloc(handler->cell_ent_cap, sizeof(uint16_t));
+	}
 }
 
 // Update all entities

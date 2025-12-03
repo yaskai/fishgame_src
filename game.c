@@ -42,6 +42,7 @@ void GameInit(Game *game) {
 	game->input_state = (InputState){0};
 
 	// Initialize entity handler
+	game->ent_handler.cell_ent_cap = game->conf.cell_ent_cap;
 	EntHandlerInit(&game->ent_handler, &game->sprite_loader, &game->cam);
 	game->ent_handler.ap = &game->audio_player;
 	game->ent_handler.debug_flags = game->conf.debug_flags;

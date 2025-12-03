@@ -124,13 +124,25 @@ void ConfigParseLine(Config *conf, char *line) {
 		if(streq(val, "true"))
 			conf->debug_flags |= FIND_FISH;
 
-	}
+	} else if(streq(key, "cell_ent_cap")) {
+
+		if(streq(val, AUTO)) 
+			conf->cell_ent_cap = 16;
+		else {
+			sscanf(val, "%hhd", &conf->cell_ent_cap);
+			printf("%hhd\n", conf->cell_ent_cap);
+		}
+		
+	} 
 }
 
 // Set default config options 
 void ConfigSetDefault(Config *conf) {
 	*conf = (Config) {
 		.debug_flags = 0,
+		.cell_ent_cap = 16,
+		.grid_offset_x = 0,
+		.grid_offset_y = 0,
 		.window_width  = CONFIG_DEFAULT_WW,
 		.window_height = CONFIG_DEFAULT_WH,
 		.refresh_rate  = CONFIG_DEFAULT_RR

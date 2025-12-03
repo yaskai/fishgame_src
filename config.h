@@ -27,11 +27,15 @@
 
 typedef struct {
 	uint8_t debug_flags;
+	uint8_t cell_ent_cap;
 
 	unsigned int window_width;
 	unsigned int window_height;
 
 	float refresh_rate;
+
+	float grid_offset_x;
+	float grid_offset_y;
 
 	char level_path[128];
 } Config;
