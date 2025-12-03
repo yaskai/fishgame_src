@@ -15,6 +15,7 @@
 #define SHOW_GRID		0x01
 #define SHOW_COLLIDERS	0x02
 #define DISABLE_TIMER	0x04
+#define FIND_FISH		0x08
 
 #define PLATFORM_LINUX	0
 #define PLATFORM_WIN64	1

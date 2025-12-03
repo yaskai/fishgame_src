@@ -182,27 +182,20 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 	Entity *player_ent = &handler->ents[handler->player_id];	
 
-	/*
-	for(uint16_t i = 0; i < handler->count; i++) {
-		//if(i == handler->player_id) continue;
+	if(handler->debug_flags & FIND_FISH) {
+		for(uint16_t i = 0; i < handler->count; i++) {
+			if(i == handler->player_id) continue;
 
-		// Get entity pointer
-		Entity *ent = &handler->ents[i];
-			
-		// Skip draw call if entitiy inactive
-		//if(!(ent->flags & ENT_ACTIVE)) continue;
-		
-		// Call entity's draw function
-		//if(ent->draw) ent->draw(ent, handler->sprite_loader);
+			// Get entity pointer
+			Entity *ent = &handler->ents[i];
+				
+			//DrawText(TextFormat("%d", ent->type), ent->position.x, ent->position.y, 128, RAYWHITE);
+			if(ent->type != ENT_FISH) continue;
+			if(!(ent->flags & ENT_ACTIVE)) continue;
 
-		//DrawText(TextFormat("%d", ent->type), ent->position.x, ent->position.y, 128, RAYWHITE);
-		if(ent->type != ENT_FISH) continue;
-		if(!(ent->flags & ENT_ACTIVE)) continue;
-
-		FishDraw(ent, handler->sprite_loader);
-		DrawLine(EntCenter(ent).x, EntCenter(ent).y, EntCenter(player_ent).x, EntCenter(player_ent).y, GREEN);
+			DrawLine(EntCenter(ent).x, EntCenter(ent).y, EntCenter(player_ent).x, EntCenter(player_ent).y, GREEN);
+		}
 	}
-	*/
 
 	Grid *grid = &handler->grid;
 	uint16_t player_cell_id = (player_cell_x + player_cell_y * grid->row_count);

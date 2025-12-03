@@ -116,12 +116,21 @@ void ConfigParseLine(Config *conf, char *line) {
 		if(streq(val, "true"))
 			conf->debug_flags |= DISABLE_TIMER;
 
+	} else if(streq(key, "debug_find_fish")) {
+
+		char *n = strchr(val, '\n');
+		if(n) *n = '\0';
+
+		if(streq(val, "true"))
+			conf->debug_flags |= FIND_FISH;
+
 	}
 }
 
 // Set default config options 
 void ConfigSetDefault(Config *conf) {
 	*conf = (Config) {
+		.debug_flags = 0,
 		.window_width  = CONFIG_DEFAULT_WW,
 		.window_height = CONFIG_DEFAULT_WH,
 		.refresh_rate  = CONFIG_DEFAULT_RR

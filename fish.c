@@ -47,6 +47,6 @@ void FishDraw(Entity *fish, SpriteLoader *sl) {
 	else 
 		DrawSpritePro(sheet, 0, fish->position, fish->sprite_angle, fish->scale, draw_flags);
 
-	DrawText(TextFormat("%d", fish->id), fish->position.x, fish->position.y, 32, GREEN);
+	//DrawText(TextFormat("%d", fish->id), fish->position.x, fish->position.y, 32, GREEN);
 }
 
