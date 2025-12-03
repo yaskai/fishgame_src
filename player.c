@@ -466,6 +466,9 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 	uint16_t h_cell_x = h->position.x / grid->cell_size;
 	uint16_t h_cell_y  = h->position.y / grid->cell_size;
+
+	if(h_cell_x < 0 || h_cell_y < 0 || h_cell_x >= grid->row_count - 1 || h_cell_y >= grid->row_count - 1) return;
+
 	uint16_t h_cell_id = (h_cell_x + h_cell_y * grid->row_count);
 	Cell *player_cell = &grid->cells[h_cell_id];
 
@@ -585,7 +588,7 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 void HarpoonExtend(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	p->rope->start_id = 0;
 
-	if(p->rope->stretch >= p->rope->max_stretch && p->rope->segment_dist && rope.segment_dist >= 3.9f) {
+	if(p->rope->stretch >= p->rope->max_stretch && p->rope->segment_dist && p->rope->segment_dist >= 3.9f) {
 		p->rope_timer -= dt;
 		if(p->rope_timer < 0) {
 			if(p->rope_timer < 0) h->state = HARPOON_RETRACT; 

@@ -134,6 +134,8 @@ void RopeCollision(Rope *rope, float dt) {
 	int16_t harpoon_cell_y = player_data->harpoon.position.y / grid->cell_size;
 	int16_t harpoon_cell_id = (harpoon_cell_x + harpoon_cell_y * grid->row_count);
 
+	if(harpoon_cell_x < 0 || harpoon_cell_y < 0 || harpoon_cell_x >= grid->row_count - 1 || harpoon_cell_y >= grid->row_count - 1) return;
+
 	Cell cells[2] = { grid->cells[handler->player_cell], grid->cells[harpoon_cell_id] };
 
 	for(uint16_t i = 0; i < ROPE_TAIL; i++) {
