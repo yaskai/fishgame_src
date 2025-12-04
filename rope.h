@@ -37,6 +37,8 @@ typedef struct {
 	float stretch;
 	float max_stretch;
 
+	float bounce_timer;
+
 	Vector2 gravity;
 
 	RopeNode *nodes;

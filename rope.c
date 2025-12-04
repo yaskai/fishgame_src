@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,8 +17,8 @@ void RopeSetHandler(EntHandler *handler) { rope_handler_ptr = handler; }
 
 void RopeInit(Rope *rope, Vector2 pos) {
 	rope->length = ROPE_LENGTH;
-	rope->iterations = 16;
-	rope->dampening = 0.9f;
+	rope->iterations = 8;
+	rope->dampening = 0.925f;
 	rope->segment_dist = 3.25f;
 	rope->start_id = 0;
 	rope->end_id = ROPE_TAIL;
@@ -75,7 +76,7 @@ void RopeIntegrate(Rope *rope, float dt) {
 
 void RopeSolveConstraints(Rope *rope, float dt) {
 	rope->stretch = 0;
-	rope->max_stretch = rope->segment_dist * (rope->end_id * 2.0f);
+	rope->max_stretch = rope->segment_dist * (rope->end_id * 1.5f);
 
 	for(uint16_t i = rope->start_id; i < rope->end_id; i++) {
 		RopeNode *node_a = &rope->nodes[i];
@@ -96,6 +97,7 @@ void RopeSolveConstraints(Rope *rope, float dt) {
 		
 		if((node_a->flags & NODE_PINNED) && (node_b->flags & NODE_PINNED)) {
 			continue;
+
 		} else if(node_a->flags & NODE_PINNED) {
 			node_b->pos_curr = Vector2Add(node_b->pos_curr, Vector2Scale(delta, correction));	
 			//node_b->pos_prev = Vector2Add(node_b->pos_prev, Vector2Scale(vel_transfer, 1));
@@ -103,6 +105,7 @@ void RopeSolveConstraints(Rope *rope, float dt) {
 			node_a->pos_curr = *rope->anchors[0];
 
 			continue;
+
 		} else if(node_b->flags & NODE_PINNED) {
 			node_a->pos_curr = Vector2Add(node_b->pos_curr, Vector2Scale(delta, correction));	
 			//node_a->pos_prev = Vector2Subtract(node_a->pos_prev, Vector2Scale(vel_transfer, 1));
@@ -112,7 +115,7 @@ void RopeSolveConstraints(Rope *rope, float dt) {
 			continue;
 		}
 
-		if(!Vector2Equals(prev_a, node_a->pos_curr) || !Vector2Equals(prev_b,  node_b->pos_curr)) continue;
+		if(!Vector2Equals(prev_a, node_a->pos_curr) || !Vector2Equals(prev_b, node_b->pos_curr)) continue;
 
 		node_a->pos_curr = Vector2Subtract(node_a->pos_curr, Vector2Scale(delta, 0.5f * correction * node_a->mass));
 		node_b->pos_curr = Vector2Add(node_b->pos_curr, Vector2Scale(delta, 0.5f * correction * node_b->mass));
@@ -188,6 +191,8 @@ void RopeDiffuse(Rope *rope, float dt) {
 }
 
 void RopeUpdate(Rope *rope, float dt) {
+	rope->bounce_timer -= dt;
+
 	for(uint8_t i = 0; i < rope->iterations; i++) {
 		RopeIntegrate(rope, dt);
 		RopeCollision(rope, dt);
