@@ -2,8 +2,11 @@
 #include <stdint.h>
 #include <float.h>
 #include <stdio.h>
-#include "raylib.h"
-#include "raymath.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
+
 #include "entity.h"
 #include "sprites.h"
 #include "ent_handler.h"

@@ -2,7 +2,11 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-#include "raylib.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
+
 #include "sprites.h"
 #include "bg.h"
 

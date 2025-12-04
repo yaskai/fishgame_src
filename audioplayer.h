@@ -2,7 +2,10 @@
 #define AUDIOPLAYER_H_
 
 #include <stdint.h>
-#include "raylib.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
 
 #define SFX_MAX 	32
 #define TRACK_MAX	16
@@ -41,8 +44,12 @@ typedef struct {
 	uint8_t sfx_count;
 	uint8_t track_count;
 
-	SoundEffect sfx[SFX_MAX];
-	Track tracks[TRACK_MAX];
+	//SoundEffect sfx[SFX_MAX];
+	//Track tracks[TRACK_MAX];
+	
+	SoundEffect *sfx;
+	Track *tracks;
+
 } AudioPlayer;
 
 void AudioPlayerInit(AudioPlayer *ap);

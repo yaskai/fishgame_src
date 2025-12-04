@@ -1,19 +1,30 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "raylib.h"
-#include "raymath.h"
+#include <stdlib.h>
+
+//#include "raylib.h"
+//#include "raymath.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RLIB_PATH_LOCAL
+
 #include "audioplayer.h"
 
 void AudioPlayerInit(AudioPlayer *ap) {
 	char *effects_prefix = "resources/audio/effects"; 
 	FilePathList path_effects = LoadDirectoryFiles(effects_prefix);
 
+	ap->sfx = malloc(sizeof(SoundEffect) * path_effects.count);
+
 	for(uint16_t i = 0; i < path_effects.count; i++) 
 		ap->sfx[i] = LoadSoundEffect(0, path_effects.paths[i]);
 
 	char *tracks_prefix = "resources/audio/tracks"; 
 	FilePathList path_tracks  = LoadDirectoryFiles(tracks_prefix);
+
+	ap->tracks = malloc(sizeof(Track) * path_tracks.count);
 
 	for(uint16_t i = 0; i < path_tracks.count; i++)
 		ap->tracks[i] = LoadTrack(0, path_tracks.paths[i]);

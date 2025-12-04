@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <string.h>
-#include "raylib.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
+
 #include "config.h"
 
 // Read configuration options from provided file

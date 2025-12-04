@@ -2,7 +2,10 @@
 #define SPRITES_H_
 
 #include <stdint.h>
-#include "raylib.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
 
 #define SPR_TEX_VALID	0x01
 #define SPR_ALLOCATED	0x02

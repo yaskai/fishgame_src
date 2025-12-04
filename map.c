@@ -126,6 +126,7 @@ void GridUpdate(EntHandler *handler, Entity *ent) {
 
 	// Skip update if out of bounds
 	if(dest_x < 0 || dest_y < 0 || dest_x >= grid->row_count - 1 || dest_y >= grid->row_count - 1) return;
+	if(src_x < 0 || src_y < 0 || src_x >= grid->row_count - 1 || src_y >= grid->row_count - 1) return;
 
 	Cell *cell_src  = &grid->cells[src_id];
 	Cell *cell_dest  = &grid->cells[dest_id];

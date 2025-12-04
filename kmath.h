@@ -1,4 +1,6 @@
-#include "raylib.h"
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
 
 #ifndef KMATH_H_
 #define KMATH_H_

@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
-#include "raylib.h"
-#include "raymath.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
+
 #include "ent_handler.h"
 #include "map.h"
 #include "entity.h"
@@ -147,7 +150,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 	player_cell_y = player_ent->position.y / grid->cell_size;
 	handler->player_cell = (player_cell_x + player_cell_y * grid->row_count);
 
-	Cell *player_cell = &grid->cells[handler->player_cell];
+	//Cell *player_cell = &grid->cells[handler->player_cell];
 		
 	int8_t dir_x[] = { -1, 0, 1 };
 	int8_t dir_y[] = { -1, 0, 1 };

@@ -1,5 +1,8 @@
 #include <stdint.h>
-#include "raylib.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
 
 #ifndef ROPE_H_
 #define ROPE_H_

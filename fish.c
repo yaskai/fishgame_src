@@ -1,5 +1,9 @@
 #include <stdio.h>
-#include "raylib.h"
+
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+#include RMATH_PATH_LOCAL
+
 #include "entity.h"
 #include "sprites.h"
 #include "raymath.h"

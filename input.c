@@ -1,5 +1,8 @@
-#include "raylib.h"
+#include "libpath.h"
+#include RLIB_PATH_LOCAL
+
 #include "input.h"
+
 
 void ProcessInput(InputState *input, float delta_time) {
 	// Poll input
