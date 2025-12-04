@@ -665,7 +665,10 @@ void HarpoonRetract(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 		node->pos_prev = Vector2Add(node->pos_prev, Vector2Scale(to_player, dt));
 	}
 
-	if(Vector2Distance(rope->nodes[ROPE_TAIL].pos_curr, EntCenter(player)) <= player->radius * 2) {
+	float vel_mod = Vector2Length(player->velocity);
+	vel_mod = Clamp(vel_mod, 1.0f, 3.0f);
+
+	if(Vector2Distance(rope->nodes[ROPE_TAIL].pos_curr, EntCenter(player)) <= (player->radius * vel_mod) * 2) {
 		h->flags &= ~HARPOON_ACTIVE;
 		h->state = HARPOON_NONE;
 	}

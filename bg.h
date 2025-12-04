@@ -24,6 +24,7 @@ typedef struct {
 
 typedef struct {
 	float scroll_mod; 
+	float rotation;
 
 	Vector2 offset;
 

@@ -121,6 +121,8 @@ void GameDrawToWindow(Game *game) {
 	for(uint8_t i = 0; i < 3; i++) {
 		BackgroundLayer *layer = &game->bg.layers[i];
 
+		//layer->rotation = Lerp(layer->rotation, game->cam.rotation, GetFrameTime() * 7.5f);
+
 		float tex_w = game->bg.layers[i].rt.texture.width;
 		float tex_h = game->bg.layers[i].rt.texture.height;
 
@@ -153,10 +155,11 @@ void GameDrawToWindow(Game *game) {
 			},
 
 			(Vector2){tex_w * 0.5f, tex_h * 0.5f},
-			game->cam.rotation,
+			game->bg.layers[i].rotation,
 			WHITE
 		);
 
+		/*
 		DrawTexturePro(
 			game->bg.layers[i].rt.texture,
 
@@ -178,6 +181,7 @@ void GameDrawToWindow(Game *game) {
 			game->cam.rotation,
 			WHITE
 		);
+		*/
 	}
 	
 	// Draw scaled render_target texture to window 
@@ -247,6 +251,12 @@ void MainUpdate(Game *game, float delta_time) {
 		game->bg.offset_vel = offset_move;
 
 		layer->offset = Vector2Add(layer->offset, offset_move);
+
+		layer->rotation = Lerp(
+			layer->rotation,
+			game->cam.rotation - player_ent->angle_vel * 0.5f,
+			(layer->scroll_mod * 30) * delta_time * game->ent_handler.time_mod
+		);
 	}
 	
 	// Update entities
