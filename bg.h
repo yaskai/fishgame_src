@@ -8,8 +8,8 @@
 #ifndef BG_H_
 #define BG_H_
 
-#define STAR_COUNT 	 80
-#define LAYER_COUNT	  3
+#define STAR_COUNT 	  512
+#define LAYER_COUNT	  	3
 
 typedef struct {
 	uint8_t sprite_id;
@@ -25,13 +25,19 @@ typedef struct {
 typedef struct {
 	float scroll_mod; 
 
+	Vector2 offset;
+
 	Star *stars;
+
+	RenderTexture rt;
 } BackgroundLayer;
 
 typedef struct {
 	Vector2 offset;
+	Vector2 offset_vel;
 
 	Rectangle src_rec;
+	Rectangle dst_rec;
 		
 	BackgroundLayer layers[LAYER_COUNT];
 

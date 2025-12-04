@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -57,7 +58,6 @@ void GameRenderInit(Game *game) {
 	// Set source and destination rectangle values for window scaling
 	game->render_src_rec  = (Rectangle) { 0, 0, VIRTUAL_WIDTH, -VIRTUAL_HEIGHT };
 	game->render_dest_rec = (Rectangle) { 0, 0, game->conf.window_width, game->conf.window_height };
-
 }
 
 // Initialize sprite loader struct, load assets
@@ -95,8 +95,12 @@ void GameUpdate(Game *game) {
 
 // Render game to buffer texture
 void GameDrawToBuffer(Game *game, uint8_t flags) {
-	//if(game->state == GAME_MAIN) 
+	if(game->state == GAME_MAIN) { 
+		//BeginTextureMode(game->bg.render_texture);
+		//ClearBackground((Color){0});
 		//BgDraw(&game->bg);
+		//EndTextureMode();
+	}
 
 	BeginTextureMode(render_target);
 	ClearBackground((Color){0});
@@ -109,20 +113,72 @@ void GameDrawToBuffer(Game *game, uint8_t flags) {
 
 // Render buffer onto window
 void GameDrawToWindow(Game *game) {
+	BgDraw(&game->bg);
 	BeginDrawing();
+
 	ClearBackground(BLACK);
 
-	/*
-	DrawTexturePro(
-		game->bg.render_texture.texture,
-		game->render_src_rec,
-		game->render_dest_rec,
-		//(Vector2){game->bg.src_rec.width / 2, game->bg.src_rec.height / 2},
-		(Vector2){1920.0f / 4, 1080.0f / 4},
-		-game->cam.rotation,
-		WHITE
-	);
-	*/
+	for(uint8_t i = 0; i < 3; i++) {
+		BackgroundLayer *layer = &game->bg.layers[i];
+
+		float tex_w = game->bg.layers[i].rt.texture.width;
+		float tex_h = game->bg.layers[i].rt.texture.height;
+
+		//layer->offset.x = fmod(layer->offset.x, tex_w);
+		//layer->offset.y = fmod(layer->offset.y, tex_h);
+		
+		/*
+		if(layer->offset.x < 0)
+			layer->offset.x += tex_w;
+
+		if(layer->offset.y < 0)
+			layer->offset.y += tex_h;
+		*/
+
+		DrawTexturePro(
+			game->bg.layers[i].rt.texture,
+
+			(Rectangle) {
+				layer->offset.x,
+				layer->offset.y,
+				tex_w,
+				tex_h
+			},
+
+			(Rectangle) {
+				tex_w * 0.5f,
+				tex_h * 0.5f,
+				tex_w,
+				tex_h
+			},
+
+			(Vector2){tex_w * 0.5f, tex_h * 0.5f},
+			game->cam.rotation,
+			WHITE
+		);
+
+		DrawTexturePro(
+			game->bg.layers[i].rt.texture,
+
+			(Rectangle) {
+				layer->offset.x,
+				layer->offset.y,
+				tex_w,
+				tex_h
+			},
+
+			(Rectangle) {
+				tex_w * 0.5f,
+				tex_h * 0.5f,
+				tex_w,
+				tex_h
+			},
+
+			(Vector2){tex_w * 0.5f, tex_h * 0.5f},
+			game->cam.rotation,
+			WHITE
+		);
+	}
 	
 	// Draw scaled render_target texture to window 
 	DrawTexturePro(render_target.texture, game->render_src_rec, game->render_dest_rec, Vector2Zero(), 0, WHITE);
@@ -158,7 +214,7 @@ void TitleDraw(Game *game, uint8_t flags) {
 	DrawTexturePro(
 		controls,
 		(Rectangle){0, 0, controls.width, controls.height},
-		(Rectangle){0, 0, 1920 * 0.5f, 1080 * 0.5f},
+		(Rectangle){0, 0, 1920, 1080},
 		(Vector2){0, 0},
 		0, 
 		WHITE
@@ -183,13 +239,16 @@ void MainUpdate(Game *game, float delta_time) {
 	// TODO:
 	// Move somewhere else, encapsulate
 	Entity *player_ent = &game->ent_handler.ents[game->ent_handler.player_id];
+	Vector2 forward = Vector2Normalize(player_ent->velocity);
 
-	Vector2 forward = GetDirectionNormalized(
-		GetWorldToScreen2D(player_ent->position, game->cam), GetWorldToScreen2D(player_ent->prev_pos, game->cam));
+	for(uint8_t i = 0; i < LAYER_COUNT; i++) {
+		BackgroundLayer *layer = &game->bg.layers[i];
+		Vector2 offset_move = Vector2Scale(forward, Vector2Length(player_ent->velocity) * layer->scroll_mod * delta_time);
+		game->bg.offset_vel = offset_move;
 
-	Vector2 offset_move = Vector2Scale(forward, Vector2Length(player_ent->velocity) * delta_time * game->ent_handler.time_mod);
-	game->bg.offset = Vector2Subtract(game->bg.offset, offset_move);
-
+		layer->offset = Vector2Add(layer->offset, offset_move);
+	}
+	
 	// Update entities
 	EntHandlerUpdate(&game->ent_handler, delta_time);
 }
@@ -197,7 +256,7 @@ void MainUpdate(Game *game, float delta_time) {
 // Render objects to buffer texture
 void MainDraw(Game *game, uint8_t flags) {
 	// No camera transformations:
-	BgDraw(&game->bg);
+	//BgDraw(&game->bg);
 
 	// With camera transformations:
 	BeginMode2D(game->cam);
