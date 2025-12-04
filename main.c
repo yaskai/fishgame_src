@@ -23,6 +23,7 @@ int main() {
 	SetConfigFlags(0);
 	InitWindow(game.conf.window_width, game.conf.window_height, "Fish Game Demo");
 	SetTargetFPS(game.conf.refresh_rate);
+	HideCursor();
 	
 	// Load empty texture for use as a buffer
 	// Buffer is drawn and scaled to window resolution

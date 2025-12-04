@@ -12,7 +12,7 @@
 
 #define PLAYER_MAX_VEL 		800.0f
 #define CAM_ZOOM_DEFAULT 	0.9f
-#define CAM_ZOOM_FOCUSED	1.2f
+#define CAM_ZOOM_FOCUSED	1.05f
 #define SCREENSHAKE_MAX		10
 
 #define RECOIL_AMOUNT		100.04
@@ -41,6 +41,8 @@ SpriteAnimation *recoil_anims[2];
 SpriteAnimation *swim_up_anim;
 
 uint8_t recoil_dir;
+
+float zoom_targ = CAM_ZOOM_DEFAULT;
 
 // Initialize player, set data, pointers, references, etc.
 void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
@@ -247,7 +249,8 @@ void PlayerCameraControls(Entity *player, float dt) {
 	float rot_target = -player->angle * RAD2DEG - 90;
 	cam->rotation = Lerp(cam->rotation, rot_target, dt * 5);
 
-	cam->zoom = CAM_ZOOM_DEFAULT;
+	//cam->zoom = CAM_ZOOM_DEFAULT;
+	cam->zoom = Lerp(cam->zoom, zoom_targ, dt);
 
 	// Apply screenshake
 	if(screenshake > 0) {
@@ -262,6 +265,11 @@ void PlayerCameraControls(Entity *player, float dt) {
 		// Decrement screenshake value
 		screenshake -= dt;
 	} 
+
+	if(p->harpoon.state == HARPOON_AIM) {
+		zoom_targ = CAM_ZOOM_FOCUSED;
+	} else 
+		zoom_targ = CAM_ZOOM_DEFAULT;
 }
 
 // Apply and manage velocity from jetback to player
@@ -520,6 +528,8 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 				h->hit_pos = h->position;
 				h->hit_angle = ent->angle;
 				h->offset = Vector2Subtract(h->position, ent->position);
+
+				screenshake = 0.5f;
 				
 				if(ent->type == ENT_FISH) {
 					h->position = Vector2Add(EntCenter(ent), Vector2Scale(h->offset, 0.5f));
@@ -529,6 +539,8 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 					ent->velocity = Vector2Zero();
 					//ent->velocity = Vector2Scale(h->velocity, 0.04f);
+
+					screenshake += 0.1f;
 				}
 
 				h->velocity = Vector2Zero();
@@ -569,9 +581,12 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 	// Flag harpoon as active
 	h->flags |= HARPOON_ACTIVE;
 
+	screenshake = 0.5f;
+
 	// Set node positions to player entity center
-	for(uint8_t i = 0; i < ROPE_TAIL; i++) 
-		RopeNodeSetPos(&p->rope->nodes[i], EntCenter(player));
+	for(uint8_t i = 0; i < ROPE_TAIL; i++) { 
+		RopeNodeSetPos(&p->rope->nodes[i],  Vector2Add(EntCenter(player), Vector2Scale(direction, i * 1.2f)));
+	}
 
 	// Set initial segment length to 0
 	p->rope->segment_dist = 1.0f;
@@ -582,7 +597,7 @@ void HarpoonShoot(Entity *player, PlayerData *p, Harpoon *h) {
 
 	// Set harpoon's initial position and velocity 
 	h->position = EntCenter(player);
-	h->velocity = Vector2Scale(direction, 800);
+	h->velocity = Vector2Scale(direction, 1000);
 
 	// Set harpoon state to extend
 	h->state = HARPOON_EXTEND;
@@ -606,7 +621,7 @@ void HarpoonExtend(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	Vector2 harpoon_tan = (Vector2){-h->velocity.y, h->velocity.x};
 	harpoon_tan = Vector2Normalize(harpoon_tan);
 
-	for(uint8_t k = ROPE_TAIL - 32; k < ROPE_TAIL - 2; k++) {
+	for(uint8_t k = ROPE_TAIL - 64; k < ROPE_TAIL - 32; k++) {
 		float v = 0.5f * sinf(GetTime() * GetTime());
 		//p->rope->nodes[k].pos_curr = Vector2Add(p->rope->nodes[k].pos_curr, Vector2Scale(harpoon_tan, v));
 		p->rope->nodes[k].pos_prev = Vector2Add(p->rope->nodes[k].pos_prev, Vector2Scale(harpoon_tan, -v));

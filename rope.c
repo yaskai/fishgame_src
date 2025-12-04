@@ -17,8 +17,8 @@ void RopeSetHandler(EntHandler *handler) { rope_handler_ptr = handler; }
 
 void RopeInit(Rope *rope, Vector2 pos) {
 	rope->length = ROPE_LENGTH;
-	rope->iterations = 8;
-	rope->dampening = 0.925f;
+	rope->iterations = 12;
+	rope->dampening = 0.825f;
 	rope->segment_dist = 3.25f;
 	rope->start_id = 0;
 	rope->end_id = ROPE_TAIL;
