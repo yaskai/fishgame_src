@@ -5,9 +5,8 @@
 #include <string.h>
 #include <float.h>
 
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RMATH_PATH_LOCAL
+#include "raylib.h"
+#include "raymath.h"
 
 #include "ent_handler.h"
 #include "map.h"

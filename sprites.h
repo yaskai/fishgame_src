@@ -3,9 +3,7 @@
 
 #include <stdint.h>
 
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RMATH_PATH_LOCAL
+#include "raylib.h"
 
 #define SPR_TEX_VALID	0x01
 #define SPR_ALLOCATED	0x02

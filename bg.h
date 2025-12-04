@@ -1,8 +1,7 @@
 #include <stdint.h>
 
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RMATH_PATH_LOCAL
+#include "raylib.h"
+#include "raymath.h"
 
 #include "sprites.h"
 

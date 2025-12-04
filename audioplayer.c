@@ -3,12 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-//#include "raylib.h"
-//#include "raymath.h"
-
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RLIB_PATH_LOCAL
+#include "raylib.h"
+#include "raymath.h"
 
 #include "audioplayer.h"
 

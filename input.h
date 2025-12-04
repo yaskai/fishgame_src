@@ -1,6 +1,4 @@
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RMATH_PATH_LOCAL
+#include "raylib.h"
 
 #ifndef INPUT_H_
 #define INPUT_H_

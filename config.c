@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RMATH_PATH_LOCAL
+#include "raylib.h"
+#include "raymath.h"
 
 #include "config.h"
 

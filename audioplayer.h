@@ -1,11 +1,9 @@
+#include "raylib.h"
+
 #ifndef AUDIOPLAYER_H_
 #define AUDIOPLAYER_H_
 
 #include <stdint.h>
-
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
-#include RMATH_PATH_LOCAL
 
 #define SFX_MAX 	32
 #define TRACK_MAX	16

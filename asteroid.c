@@ -1,5 +1,4 @@
-#include "libpath.h"
-#include RLIB_PATH_LOCAL
+#include "raylib.h"
 
 #include "entity.h"
 #include "sprites.h"
