@@ -71,6 +71,7 @@ void GameContentInit(Game *game) {
 	AudioPlayerInit(&game->audio_player);
 
 	controls = LoadTexture("resources/fishgamecontrols.jpg");
+	//controls = LoadTexture("resources/xbox.png");
 	SetTextureFilter(controls, TEXTURE_FILTER_TRILINEAR);
 }
 
@@ -215,12 +216,12 @@ void TitleDraw(Game *game, uint8_t flags) {
 	//DrawText("Fish game Demo", screen_center.x - 380, screen_center.y - 100, 100, RAYWHITE);
 	DrawText(prompt_text, screen_center.x - 160, screen_center.y + 100, 32, RAYWHITE);
 
-	DrawTextureRec(controls, (Rectangle){0, 0, controls.width, controls.height}, (Vector2){0, 0}, WHITE);
+	//DrawTextureRec(controls, (Rectangle){0, 0, controls.width, controls.height}, (Vector2){0, 0}, WHITE);
 
 	DrawTexturePro(
 		controls,
 		(Rectangle){0, 0, controls.width, controls.height},
-		(Rectangle){0, 0, 1920, 1080},
+		(Rectangle){0, 0, 1920 * 0.5f, 1080 * 0.5f},
 		(Vector2){0, 0},
 		0, 
 		WHITE
@@ -229,6 +230,8 @@ void TitleDraw(Game *game, uint8_t flags) {
 
 // Main gameplay loop logic
 void MainUpdate(Game *game, float delta_time) {
+	PlayTrack(&game->audio_player, 2);
+
 	game->ent_handler.game_timer -= delta_time;
 
 	// Tick down game timer

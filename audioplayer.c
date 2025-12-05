@@ -65,6 +65,7 @@ Track LoadTrack(uint8_t flags, char *file_name) {
 }
 
 void PlayEffect(AudioPlayer *ap, uint8_t id) {
+	SetSoundPitch(ap->sfx[id].sound, GetRandomValue(-3, 1));
 	PlaySound(ap->sfx[id].sound);
 }
 
