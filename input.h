@@ -23,6 +23,7 @@ typedef struct {
 	bool pause;
 	bool jetpack;
 	bool retract;
+	bool cancel;
 
 	float move_x, move_y;
 	float look_x, look_y;

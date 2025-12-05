@@ -241,7 +241,7 @@ void PlayerInput(Entity *player, float dt) {
 			last_look = targ;
 		}
 
-		p->aim_dir = Vector2Lerp(p->aim_dir, targ, GetFrameTime() * 20);
+		p->aim_dir = Vector2Lerp(p->aim_dir, targ, GetFrameTime() * 10);
 
 		p->cursor_pos = Vector2Add(EntCenter(player), Vector2Scale(p->aim_dir, 100));
 	}
@@ -480,10 +480,17 @@ void HarpoonInput(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 			//p->rope->start_id = temp_rope_start;
 			p->rope->start_id = 0;
 
-			if(IsKeyPressed(KEY_X)) {
+			if(p->input->cancel) {
 				//player->velocity = Vector2Zero();
-				PlayerFlingStart(player, p, h);
-				h->flags ^= HARPOON_ACTIVE;
+				//PlayerFlingStart(player, p, h);
+				//h->flags ^= HARPOON_ACTIVE;
+
+				Entity *hit_ent = &ptr_player_handler->ents[h->hit_id];
+
+				if(hit_ent->type == ENT_FISH) 
+					h->state = HARPOON_REEL;
+				else
+					h->state = HARPOON_RETRACT;
 
 				break;
 			}
@@ -619,6 +626,18 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 					//ent->velocity = Vector2Scale(h->velocity, 0.04f);
 
 					screenshake += 0.1f;
+				}
+
+				if(ent->type == ENT_ASTEROID) {
+					/*
+					Vector2 to_asteroid = GetDirectionNormalized(EntCenter(ent), EntCenter(player));
+					player->velocity = Vector2Add(player->velocity, Vector2Scale(to_asteroid, 50));
+					player->position = Vector2Add(player->position, Vector2Scale(to_asteroid, 50));
+					*/
+
+					Vector2 to_node = GetDirectionNormalized(EntCenter(ent), p->rope->nodes[16].pos_curr);
+					player->velocity = Vector2Add(player->velocity, Vector2Scale(to_node, 100));
+					//player->position = Vector2Add(player->position, Vector2Scale(to_node, 50));
 				}
 
 				h->velocity = Vector2Zero();
@@ -839,7 +858,7 @@ void HarpoonStuck(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 		p->fling_timer = Clamp(p->fling_timer, 0, 1 + fabsf(hit_ent->angle_vel) * hit_ent->radius);
 	}
 
-	float pull_amount = fabs(p->rope->stretch - p->rope->max_stretch) * 10.0f;
+	float pull_amount = fabs(p->rope->stretch - p->rope->max_stretch) * 1.0f;
 
 	float dir_dot = Vector2DotProduct(pull_dir, Vector2Normalize(player->velocity));
 	float harpoon_dist = Vector2Distance(EntCenter(player), h->position);
@@ -847,7 +866,7 @@ void HarpoonStuck(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	p->rope->gravity = Vector2Lerp(p->rope->gravity, rope_grav_targ, dt * 2);
 
 	bool pull_static = (
-		dir_dot < 0.0f &&
+		dir_dot <= -0.9f &&
 		p->rope->stretch >= p->rope->max_stretch &&
 		h->state != HARPOON_REEL  
 	);
@@ -864,11 +883,11 @@ void HarpoonStuck(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 	if(pull_static) {
 		if(hit_ent->type == ENT_FISH) {
 			pull_dir = Vector2Normalize(Vector2Subtract(EntCenter(hit_ent), EntCenter(player)));
-			rope_grav_targ = pull_dir;
-			hit_ent->velocity = Vector2Subtract(hit_ent->velocity, Vector2Scale(pull_dir, pull_amount * dt));
-
+			//rope_grav_targ = pull_dir;
 			pull_amount *= 0.1f;
 			pull_amount = Clamp(pull_amount, 0, 10);
+
+			hit_ent->velocity = Vector2Subtract(hit_ent->velocity, Vector2Scale(pull_dir, pull_amount * dt));
 		} else 
 			player->velocity = Vector2Add(player->velocity, Vector2Scale(pull_dir, pull_amount * dt));
 
@@ -946,6 +965,8 @@ void HarpoonReel(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 		FishData *f = fish->data;
 		f->timer = GetRandomValue(20, 45);
+		
+		SetVibrate(p->input, 0.85f, 0.15f);
 	}
 
 	RopeUpdate(p->rope, dt);

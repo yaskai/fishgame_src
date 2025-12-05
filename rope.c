@@ -76,7 +76,7 @@ void RopeIntegrate(Rope *rope, float dt) {
 
 void RopeSolveConstraints(Rope *rope, float dt) {
 	rope->stretch = 0;
-	rope->max_stretch = rope->segment_dist * (rope->end_id * 1.5f);
+	rope->max_stretch = rope->segment_dist * (rope->end_id * 0.5f);
 
 	for(uint16_t i = rope->start_id; i < rope->end_id; i++) {
 		RopeNode *node_a = &rope->nodes[i];
@@ -212,9 +212,12 @@ void RopeDraw(Rope *rope) {
 
 		Vector2 diff = Vector2Subtract(p1, p0);
 		float dist = Vector2Length(diff);
+
+		float alpha = ((float)(i + 1) / 255) * 2.0f;
+		if(alpha < 0.35f) alpha = 0.35f;
 		
-		DrawCircleV(p0, 6, SKYBLUE);
-		DrawLineEx(p0, p1, 12, SKYBLUE);	
+		DrawCircleV(p0, 6, ColorAlpha(SKYBLUE, alpha));
+		DrawLineEx(p0, p1, 12, ColorAlpha(SKYBLUE, alpha));	
 	}
 }
 
