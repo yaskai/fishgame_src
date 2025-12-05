@@ -108,6 +108,8 @@ void GameDrawToBuffer(Game *game, uint8_t flags) {
 	// Call state appropriate draw function
 	game_draw_funcs[game->state](game, flags);
 
+	//DrawCircleLines(500 + game->input_state.look_x * 20, 500 + game->input_state.look_y * 20, 100, RAYWHITE);
+
 	EndTextureMode();
 }
 

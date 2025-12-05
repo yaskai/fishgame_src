@@ -1,18 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdint.h>
 #include "raylib.h"
+#include "raymath.h"
 #include "input.h"
 
+int gamepad = 0;
+bool gamepad_found = 0;
+
 void ProcessInput(InputState *input, float delta_time) {
+	// Find gamepad
+	if(!gamepad_found) {
+		for(short i = 0; i < 10; i++) {
+			if(IsGamepadAvailable(i)) {
+				if((strcmp(GetGamepadName(i), "Xbox") >= 4)) {
+					gamepad = i;
+					printf("Gamepad set to: %s, id = %d\n", GetGamepadName(i), i);
+					gamepad_found = true;
+					break;
+				}
+			}
+		}
+	}
+
 	// Poll input
-	if(IsGamepadAvailable(0))
+	if(IsGamepadAvailable(gamepad)) {
 		PollInputGamepad(input);
-	else
-		PollInputKeyboard(input);
+		return;
+	}
+
+	PollInputKeyboard(input);
 
 	// TODO: 
 	// Manage timers
 }
 
 void PollInputKeyboard(InputState *input) {
+	input->use_gamepad = 0;
+
 	input->move_x = 0;
 	input->move_y = 0;
 
@@ -29,14 +55,42 @@ void PollInputKeyboard(InputState *input) {
 }
 
 void PollInputGamepad(InputState *input) {
-	// TODO:
-	// Implement gamepad input polling
-	input->move_x = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_X);
-	input->move_y = GetGamepadAxisMovement(0, GAMEPAD_AXIS_LEFT_Y);
+	input->use_gamepad = true;
 
-	input->jetpack  = IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
-	input->aim 	    = IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_TRIGGER_2);
-	input->retract  = IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
-	input->shoot 	= IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
+	input->move_x = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_X);
+	input->move_y = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_LEFT_Y);
+
+	if(input->move_x > -0.1f && input->move_x < 0.1f) {
+		input->move_x = 0.0f;
+	}
+
+	if(input->move_y > -0.1f && input->move_y < 0.1f) {
+		input->move_y = 0.0f;
+	}
+
+	input->look_x = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_X);
+	input->look_y = GetGamepadAxisMovement(gamepad, GAMEPAD_AXIS_RIGHT_Y);
+
+	if(input->look_x > -0.1f && input->look_x < 0.1f) {
+		input->look_x = 0.0f;
+	}
+
+	if(input->look_y > -0.1f && input->look_y < 0.1f) {
+		input->look_y = 0.0f;
+	}
+
+	input->jetpack  = IsGamepadButtonDown(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_DOWN);
+	input->aim 	    = IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_LEFT_TRIGGER_2);
+	input->retract  = IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
+	input->shoot 	= IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
+
+	/*
+	if(GetGamepadButtonPressed() != 0)
+		printf("%d\n", GetGamepadButtonPressed());
+	*/
+}
+
+void SetVibrate(InputState *state, float value, float t) {
+	SetGamepadVibration(gamepad, value, value, t);
 }
 

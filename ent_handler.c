@@ -191,6 +191,8 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 	Entity *player_ent = &handler->ents[handler->player_id];	
 
+	PlayerDrawAimLine(player_ent);
+
 	if(handler->debug_flags & FIND_FISH) {
 		for(uint16_t i = 0; i < handler->count; i++) {
 			if(i == handler->player_id) continue;
@@ -210,11 +212,11 @@ void EntHandlerDraw(EntHandler *handler, uint8_t flags) {
 	uint16_t player_cell_id = (player_cell_x + player_cell_y * grid->row_count);
 	Cell *player_cell = &grid->cells[player_cell_id];
 		
-	int8_t dir_x[] = { -2, -1, 0, 1, 2 };
-	int8_t dir_y[] = { -2, -1, 0, 1, 2 };
+	int8_t dir_x[] = { -3, -2, -1, 0, 1, 2, 3 };
+	int8_t dir_y[] = { -3, -2, -1, 0, 1, 2, 3 };
 
-	for(uint8_t c = 0; c < 5; c++) {
-		for(uint8_t r = 0; r < 5; r++) {
+	for(uint8_t c = 0; c < 7; c++) {
+		for(uint8_t r = 0; r < 7; r++) {
 			int16_t cell_x = player_cell_x + dir_x[c];
 			int16_t cell_y = player_cell_y + dir_y[r];
 			
@@ -333,8 +335,11 @@ void ReserveDataAsteroid(EntHandler *handler, Entity *ent) {
 	ent->scale = 1;
 
 	//ent->radius = handler->sprite_loader->spr_pool[1].frame_w * 0.5f * ent->scale;
-	ent->radius = (handler->sprite_loader->spr_pool[SHEET_ASTEROIDS].frame_w * ent->scale) * 0.5f;
-	ent->center_offset = (Vector2){ent->radius / ent->scale, ent->radius / ent->scale};
+	//ent->radius = ((handler->sprite_loader->spr_pool[SHEET_ASTEROIDS].frame_w - 32) * ent->scale) * 0.5f;
+	Spritesheet *sprite = &handler->sprite_loader->spr_pool[SHEET_ASTEROIDS];
+	ent->radius = (sprite->frame_w + sprite->frame_h) * 0.25f;
+
+	ent->center_offset = (Vector2){ent->radius / ent->scale, (ent->radius) / ent->scale};
 
 	ent->flags |= ENT_IS_BODY;
 

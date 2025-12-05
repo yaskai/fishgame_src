@@ -12,7 +12,7 @@ int main() {
 	SetMasterVolume(1);
 	
 	// Disable logs
-	SetTraceLogLevel(LOG_ERROR);
+	//SetTraceLogLevel(LOG_ERROR);
 
 	// Initialize game
 	// Set window options, instantiate objects, allocate memory, etc.

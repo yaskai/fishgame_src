@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 
 #include "raylib.h"
@@ -5,7 +6,8 @@
 
 #include "entity.h"
 #include "sprites.h"
-#include "raymath.h"
+
+#include "kmath.h"
 
 void FishUpdate(Entity *fish, float dt) {
 	FishData *fish_data = fish->data;	
@@ -14,13 +16,21 @@ void FishUpdate(Entity *fish, float dt) {
 
 	if(fish_data->state == FISH_CAUGHT) return;
 
+	if(fish_data->state == FISH_SPOOKED) {
+		fish_data->spook_timer -= dt;
+	}
+
 	fish_data->timer -= dt;
 
 	if(fish_data->timer < 0) {
 
 		fish_data->state++;
 
-		if(fish_data->state == FISH_CAUGHT) fish_data->state = FISH_IDLE; 
+		if(fish_data->state == FISH_CAUGHT) 
+			fish_data->state = FISH_IDLE; 
+		else if(fish_data->state == FISH_SPOOKED) {
+			fish_data->state = FISH_SWIM;
+		}
 
 		fish_data->timer = GetRandomValue(0, 3);
 
@@ -34,6 +44,12 @@ void FishUpdate(Entity *fish, float dt) {
 		fish->velocity = Vector2Add(fish->velocity, Vector2Scale(fish_data->dir, 1000 * dt));
 	else if(fish_data->state == FISH_IDLE)
 		fish->velocity = Vector2Lerp(fish->velocity, Vector2Zero(), dt);
+	else if(fish_data->state == FISH_SPOOKED) {
+		fish->velocity = Vector2Lerp(fish->velocity, Vector2Scale(fish->velocity, 5.0f), dt);
+	}
+
+	Vector2 move_dir = Vector2Normalize(fish->velocity);
+	fish->sprite_angle = (atan2f(-move_dir.y, move_dir.x) * RAD2DEG) - 180;
 }
 
 void FishDraw(Entity *fish, SpriteLoader *sl) {
@@ -45,8 +61,9 @@ void FishDraw(Entity *fish, SpriteLoader *sl) {
 	Spritesheet *sheet = &sl->spr_pool[SHEET_FISH_00 + fish_data->subtype];
 	SpriteAnimation *anim = &sl->anims[ANIM_FISH_SWIM_00 + fish_data->subtype];
 
-	if(fish_data->state == 1)
-		AnimDraw(anim, fish->position, draw_flags);
+	if(fish_data->state == FISH_SWIM || fish_data->state == FISH_SPOOKED)
+		//AnimDraw(anim, fish->position, draw_flags);
+		AnimDrawPro(anim, fish->position, fish->sprite_angle, fish->scale, 0);
 	else 
 		DrawSpritePro(sheet, 0, fish->position, fish->sprite_angle, fish->scale, draw_flags);
 

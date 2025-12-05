@@ -10,12 +10,16 @@
 #include "kmath.h"
 #include "audioplayer.h"
 
-#define PLAYER_MAX_VEL 		800.0f
-#define CAM_ZOOM_DEFAULT 	0.9f
-#define CAM_ZOOM_FOCUSED	1.05f
+#define PLAYER_MAX_VEL 		700.0f
+#define CAM_ZOOM_DEFAULT 	0.85f
+#define CAM_ZOOM_FOCUSED	0.95f
 #define SCREENSHAKE_MAX		10
 
 #define RECOIL_AMOUNT		100.04
+
+#define GP_CURSOR_SPEED		500.0f
+#define GP_CURSOR_ACCEL		10.0f
+#define GP_CURSOR_DEADZONE	0.550f
 
 EntHandler *ptr_player_handler; 
 void PlayerSetHandler(EntHandler *handler) { ptr_player_handler = handler; }
@@ -43,6 +47,10 @@ SpriteAnimation *swim_up_anim;
 uint8_t recoil_dir;
 
 float zoom_targ = CAM_ZOOM_DEFAULT;
+
+Vector2 last_look;
+
+float aim_angle = 0;
 
 // Initialize player, set data, pointers, references, etc.
 void PlayerInit(Entity *player, SpriteLoader *sl, Camera2D *camera) {
@@ -214,7 +222,29 @@ void PlayerInput(Entity *player, float dt) {
 	jetpack_on = (p->jetpack_cooldown <= 0 && input->jetpack);
 
 	// Get mouse cursor position in world space
-	p->cursor_pos = GetScreenToWorld2D(GetMousePosition(), *p->camera);
+	if(!p->input->use_gamepad) {
+		p->cursor_pos = GetScreenToWorld2D(GetMousePosition(), *p->camera);
+
+		Vector2 targ = GetDirectionNormalized(p->cursor_pos, EntCenter(player));
+		//p->aim_dir = GetDirectionNormalized(p->cursor_pos, EntCenter(player));
+		p->aim_dir = Vector2Lerp(p->aim_dir, targ, GetFrameTime() * 20);
+
+	} else {
+		Vector2 look_input = (Vector2){p->input->look_x, p->input->look_y};
+		float a = atan2f(look_input.x, -look_input.y) + player->angle;
+
+		Vector2 targ = (Vector2){cosf(a), sinf(a)};
+
+		if(Vector2Length(look_input) < GP_CURSOR_DEADZONE) {
+			targ = last_look;
+		} else {
+			last_look = targ;
+		}
+
+		p->aim_dir = Vector2Lerp(p->aim_dir, targ, GetFrameTime() * 20);
+
+		p->cursor_pos = Vector2Add(EntCenter(player), Vector2Scale(p->aim_dir, 100));
+	}
 
 	// Manage input for harpoon
 	HarpoonInput(player, p, &p->harpoon, dt);
@@ -268,8 +298,12 @@ void PlayerCameraControls(Entity *player, float dt) {
 
 	if(p->harpoon.state == HARPOON_AIM) {
 		zoom_targ = CAM_ZOOM_FOCUSED;
-	} else 
-		zoom_targ = CAM_ZOOM_DEFAULT;
+	} else {
+		float vel_mod = (Vector2Length(player->velocity)) * 0.005f;
+		vel_mod = Clamp(vel_mod, 1, 1.25f);
+
+		zoom_targ = CAM_ZOOM_DEFAULT / vel_mod;
+	}
 }
 
 // Apply and manage velocity from jetback to player
@@ -312,6 +346,8 @@ void PlayerHandleBodyCollision(Entity *player, PlayerData *p, Entity *ent, float
 	// Set camera screenshake value
 	screenshake = Vector2Length(player->velocity) * 0.0025f;
 	screenshake = Clamp(screenshake, 0, SCREENSHAKE_MAX);
+
+	SetVibrate(p->input, 2, 0.25f);
 
 	// Calculate direction
 	Vector2 to_ent = Vector2Subtract(EntCenter(ent), EntCenter(player));
@@ -400,8 +436,9 @@ void HarpoonUpdate(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 // Draw harpoon and connected components
 void HarpoonDraw(Entity *player, PlayerData *p, Harpoon *h, SpriteLoader *sl) {
 	// Draw aim reticle
-	if(h->state == HARPOON_AIM)
+	if(h->state == HARPOON_AIM) {
 		DrawCircleLinesV(p->cursor_pos, 15, RAYWHITE);
+	}
 
 	// Skip draw if inactive
 	if(!(h->flags & HARPOON_ACTIVE)) return;
@@ -425,7 +462,8 @@ void HarpoonInput(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 			return;
 		}
 		
-		if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) h->state = HARPOON_AIM;
+		//if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) h->state = HARPOON_AIM;
+		if(p->input->aim) h->state = HARPOON_AIM;
 
 		return;
 	}
@@ -450,7 +488,7 @@ void HarpoonInput(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 				break;
 			}
 
-			if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+			if(p->input->shoot) {
 				Entity *hit_ent = &ptr_player_handler->ents[h->hit_id];
 				if(hit_ent->type == ENT_FISH) h->state = HARPOON_REEL;
 				else h->state = HARPOON_PULL;
@@ -504,6 +542,45 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 
 				// Skip checks with entities not marked as collision bodies
 				if(ent->type == ENT_PLAYER) continue;
+
+				// Scare the feesh
+				if(ent->type == ENT_FISH) {
+					FishData *fish_data = ent->data;
+
+					bool do_spook = (
+						fish_data->state != FISH_SPOOKED 				&&
+						fish_data->spook_timer <= 0	 					&&
+						Vector2Distance(EntCenter(ent), h->position) < 450
+					);
+
+					if(do_spook) {
+						fish_data->state = FISH_SPOOKED;
+						fish_data->timer = 1;
+						fish_data->spook_timer = 5;
+
+						Vector2 to_hook = GetDirectionNormalized(h->position, EntCenter(ent));
+						Vector2 away_hook = (Vector2){-to_hook.y, to_hook.x};
+
+						Vector2 to_player = GetDirectionNormalized(EntCenter(player), EntCenter(ent));
+
+						short dir = GetRandomValue(-1, 1); 
+						if(dir == 0) dir++;
+
+						//fish_data->dir.x = dir;
+
+						//Vector2 spook_vel = Vector2Normalize(Vector2Add(away_hook, Vector2Scale(to_player, -0.2f)));
+						Vector2 fish_to_harpoon = GetDirectionNormalized(h->position, EntCenter(ent));
+
+						//Vector2 spook_vel = Vector2Normalize(h->velocity);
+						Vector2 spook_vel = Vector2Normalize(Vector2Add(away_hook, Vector2Scale(to_player, -0.2f)));
+						spook_vel = Vector2Reflect(Vector2Normalize(spook_vel), Vector2Scale(fish_to_harpoon, -1));
+
+						ent->velocity = Vector2Scale(spook_vel, 10 * dir);
+
+						Vector2 dir_vec = Vector2Normalize(Vector2Scale(ent->velocity, dir));
+						ent->sprite_angle = atan2f(-dir_vec.y, dir_vec.x);
+					}
+				}	
 				
 				Vector2 forward = Vector2Normalize(h->velocity);
 				Vector2 ray_start = h->position;
@@ -530,6 +607,7 @@ void HarpoonCollision(Entity *player, PlayerData *p, Harpoon *h, float dt) {
 				h->offset = Vector2Subtract(h->position, ent->position);
 
 				screenshake = 0.5f;
+				SetVibrate(p->input, 0.85f, 0.15f);
 				
 				if(ent->type == ENT_FISH) {
 					h->position = Vector2Add(EntCenter(ent), Vector2Scale(h->offset, 0.5f));
@@ -888,5 +966,24 @@ void PlayerFlingStart(Entity *player, PlayerData *p, Harpoon *h) {
 	Vector2 tan_vel = Vector2Subtract(player->velocity, rad_vel);
 
 	player->velocity = Vector2Scale(tan_vel, 2);
+}
+
+void PlayerDrawAimLine(Entity *player) {
+	PlayerData *p = PlayerFetchData(player);
+
+	if(p->harpoon.state != HARPOON_AIM) return;
+
+	/*
+	if(!p->input->use_gamepad)
+		return;
+	*/
+
+	Vector2 line_start = EntCenter(player);
+	Vector2 line_end = Vector2Add(line_start, Vector2Scale(p->aim_dir, 2000));
+
+	if(!p->input->use_gamepad)
+		line_end = p->cursor_pos;
+
+	DrawLineEx(line_start, line_end, 4, ColorAlpha(RAYWHITE, 0.9f));
 }
 

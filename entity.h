@@ -116,6 +116,7 @@ typedef struct {
 	Vector2 fling_vel;
 
 	Vector2 cursor_pos;
+	Vector2 aim_dir;
 
 	float *time_mod;
 
@@ -192,6 +193,8 @@ void HarpoonReel(Entity *player, PlayerData *p, Harpoon *h, float dt);
 
 void PlayerFlingStart(Entity *player, PlayerData *p, Harpoon *h);
 
+void PlayerDrawAimLine(Entity *player);
+
 // *** ASTEROID ***
 //
 typedef struct {
@@ -206,7 +209,8 @@ void AsteroidDraw(Entity *asteroid, SpriteLoader *sl);
 enum FISH_STATES {
 	FISH_IDLE,
 	FISH_SWIM,
-	FISH_CAUGHT
+	FISH_CAUGHT,
+	FISH_SPOOKED
 };
 
 // *** FISH ***
@@ -219,6 +223,7 @@ typedef struct {
 	uint8_t rarity;
 
 	float timer;
+	float spook_timer;
 
 	Vector2 dir;
 } FishData;
