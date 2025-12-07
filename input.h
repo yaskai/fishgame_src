@@ -24,6 +24,7 @@ typedef struct {
 	bool jetpack;
 	bool retract;
 	bool cancel;
+	bool reset;
 
 	float move_x, move_y;
 	float look_x, look_y;

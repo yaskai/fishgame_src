@@ -70,8 +70,8 @@ void GameContentInit(Game *game) {
 	//game->audio_player = (AudioPlayer){0};
 	AudioPlayerInit(&game->audio_player);
 
-	controls = LoadTexture("resources/fishgamecontrols.jpg");
-	//controls = LoadTexture("resources/xbox.png");
+	//controls = LoadTexture("resources/fishgamecontrols.jpg");
+	controls = LoadTexture("resources/xbox.png");
 	SetTextureFilter(controls, TEXTURE_FILTER_TRILINEAR);
 }
 
@@ -218,6 +218,7 @@ void TitleDraw(Game *game, uint8_t flags) {
 
 	//DrawTextureRec(controls, (Rectangle){0, 0, controls.width, controls.height}, (Vector2){0, 0}, WHITE);
 
+	/*
 	DrawTexturePro(
 		controls,
 		(Rectangle){0, 0, controls.width, controls.height},
@@ -226,6 +227,9 @@ void TitleDraw(Game *game, uint8_t flags) {
 		0, 
 		WHITE
 	);
+	*/
+
+	//DrawText("Right stick to swim and rotate", 100, 1080 / 2, 30, RAYWHITE);
 }
 
 // Main gameplay loop logic
@@ -288,7 +292,7 @@ void MainDraw(Game *game, uint8_t flags) {
 }
 
 void OverScreenUpdate(Game *game, float delta_time) {
-	if(IsKeyPressed(KEY_SPACE)) {
+	if(IsKeyPressed(KEY_SPACE) || IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_FACE_DOWN)) {
 		MainStart(game);
 	}
 }

@@ -85,6 +85,7 @@ void PollInputGamepad(InputState *input) {
 	input->retract  = IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
 	input->shoot 	= IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_TRIGGER_2);
 	input->cancel 	= IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_RIGHT_FACE_LEFT);
+	input->reset = IsGamepadButtonPressed(gamepad, GAMEPAD_BUTTON_MIDDLE_RIGHT);
 
 	/*
 	if(GetGamepadButtonPressed() != 0)

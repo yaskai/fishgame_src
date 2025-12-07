@@ -100,7 +100,8 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 	Entity *player_ent = &handler->ents[handler->player_id];
 	PlayerData *p = player_ent->data;
 	
-	if(IsKeyPressed(KEY_R)) {
+	//if(IsKeyPressed(KEY_R)) {
+	if(p->input->reset) {
 		player_ent->position = player_ent->start_pos;
 		player_ent->velocity = Vector2Zero();
 		p->harpoon.flags &= ~HARPOON_ACTIVE;
@@ -115,6 +116,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 		// Skip update if not active
 		if(!(ent->flags & ENT_ACTIVE)) {
 			// Fish respawn behavior
+			/*
 			if(ent->type == ENT_FISH) {
 				FishData *fish_data = ent->data;
 				fish_data->timer -= dt;
@@ -130,6 +132,7 @@ void EntHandlerUpdate(EntHandler *handler, float dt) {
 					fish_data->state = FISH_IDLE;
 				}
 			}
+			*/
 
 			continue;
 		}
